@@ -1,0 +1,66 @@
+/* Centrar todo el contenido verticalmente */
+ion-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  background: linear-gradient(135deg, #eef2f3, #f9fbfc);
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Container para los inputs */
+ion-item {
+  margin-bottom: 16px;
+  --highlight-color-focused: #00b894; /* verde moderno */
+  --background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Inputs más grandes y modernos */
+ion-input {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  font-size: 1rem;
+  border-radius: 12px;
+  height: 48px;
+  color: #2d3436;
+}
+
+/* Botón principal con gradiente */
+ion-button {
+  margin-top: 20px;
+  --border-radius: 12px;
+  --background: linear-gradient(135deg, #00b894, #00cec9);
+  --color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  height: 52px;
+  box-shadow: 0 6px 16px rgba(0, 206, 201, 0.3);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 206, 201, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Mensaje de error */
+p {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 500;
+  color: #d63031;
+  font-size: 0.95rem;
+}
+
+/* Sombra sutil para inputs */
+ion-item {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}

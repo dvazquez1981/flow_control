@@ -1,0 +1,24 @@
+{
+  "name": "daw_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Agustin Bassi, Brian Ducca",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "~8.5.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.1",
+    "sequelize": "^6.37.7",
+    "xss": "^1.0.15",
+    "morgan": "^1.10.0",
+    "winston": "^3.9.0",
+    "moment-timezone": "^0.5.43",
+    "md5": "^2.3.0"
+  }
+}

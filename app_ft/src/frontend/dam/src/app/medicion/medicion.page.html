@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+
+  <ion-toolbar>
+    <ion-buttons slot="start">
+       <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>    </ion-buttons>
+        <ion-title>Detalle mediciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  @if (mediciones.length > 0) {
+    <ion-list>
+      @for (medicion of mediciones; track medicion) {
+        <ion-item [resaltar]="+medicion.valor"> 
+          {{ medicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }} 
+          - Valor: {{ +medicion.valor | unidad:'°C' }}
+        </ion-item>
+        
+      }
+    </ion-list>
+  } @else {
+    <ion-text color="medium">
+      <p class="ion-text-center">No hay mediciones disponibles.</p>
+    </ion-text>
+  }
+
+</ion-content>

@@ -1,0 +1,32 @@
+ion-list {
+  padding: 8px;
+
+  ion-item {
+    margin-bottom: 8px;
+    border-radius: 12px;
+    --background: #fff; /* fondo blanco sólido */
+    --inner-padding-end: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    ion-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #000 !important; /* texto negro sólido */
+      white-space: normal; // por si hay texto largo
+    }
+
+    ion-button {
+      --border-radius: 8px;
+      --padding-start: 8px;
+      --padding-end: 8px;
+      --color: #000; /* botón negro */
+      font-size: 12px;
+    }
+
+    &:hover {
+      --background: #f0f0f0; /* un gris muy claro, pero mantiene contraste */
+      transform: scale(1.01);
+      transition: 0.2s ease-in-out;
+    }
+  }
+}

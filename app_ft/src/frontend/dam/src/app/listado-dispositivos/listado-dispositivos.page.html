@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Listado de Dispositivos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item *ngFor="let disp of dispositivos">
+      <ion-label>
+         {{ disp.nombre }} - {{ disp.ubicacion }}
+      </ion-label>
+      <ion-button
+        slot="end"
+        fill="outline"
+        size="small"
+        (click)="verDetalle(disp); $event.stopPropagation()"
+      >
+        Ver detalle
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

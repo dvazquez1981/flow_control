@@ -1,0 +1,77 @@
+<ion-header [translucent]="true">
+
+  <ion-toolbar>
+    <ion-buttons slot="start">
+       <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>    </ion-buttons>
+        <ion-title>Detalle Dispositivo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content *ngIf="dispositivo" class="ion-padding">
+
+  <!-- Datos del dispositivo -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Dispositivo {{ dispositivo.dispositivoId }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Nombre:</strong> {{ dispositivo.nombre }}</p>
+      <p><strong>Ubicación:</strong> {{ dispositivo.ubicacion }}</p>
+      
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Datos de la electroválvula -->
+  <ion-card *ngIf="electrovalvula">
+    <ion-card-header>
+      <ion-card-title>Electroválvula {{ electrovalvula.electrovalvulaId }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Nombre:</strong> {{ electrovalvula.nombre }}</p>
+     <p>
+       <strong>Estado actual:</strong>
+       {{ logsRiego.length > 0 ? (logsRiego[0].apertura ? 'Abierta' : 'Cerrada') : 'Cerrada' }}
+     </p>
+
+     
+      <ion-button color="success" (click)="abrirValvula()">Abrir</ion-button>
+      <ion-button color="danger" (click)="cerrarValvula()">Cerrar</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Última medición -->
+<ion-card *ngIf="ultimaMedicion">
+  <ion-card-header>
+    <ion-card-title>Última Medición</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <p><strong>Fecha:</strong> {{ ultimaMedicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+    <p><strong>Valor:</strong> {{ ultimaMedicion.valor }}</p>
+  </ion-card-content>
+  <ion-card-content>
+    <ion-button expand="block" color="primary" (click)="verMediciones(dispositivo)">
+      Ver Mediciones
+    </ion-button>
+  </ion-card-content>
+</ion-card>
+
+  <!-- Historial de logs de riego -->
+  <ion-card *ngIf="logsRiego.length">
+    <ion-card-header>
+      <ion-card-title>Historial de Riego</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let log of logsRiego">
+          <ion-label>
+
+            <p><strong>Apertura:</strong> {{ log?.apertura ? 'Abierta' : 'Cerrada' }}</p>
+            <p><strong>Fecha:</strong> {{ log?.fecha |  date:'yyyy-MM-dd HH:mm:ss' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

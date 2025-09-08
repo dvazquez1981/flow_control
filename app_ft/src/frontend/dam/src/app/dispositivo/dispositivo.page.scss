@@ -1,0 +1,173 @@
+/* */
+.page-dispositivo {
+    padding: 1rem;
+    background: #eef2f3;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 400;
+    color: #000;
+}
+
+.page-dispositivo ion-header {
+    background: #00b894;
+    color: #000;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.page-dispositivo ion-header ion-toolbar {
+    --background: #00b894;
+}
+
+.page-dispositivo ion-title {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    text-align: center;
+    letter-spacing: 0.5px;
+    color: #000;
+}
+
+.page-dispositivo ion-content {
+    --background: #eef2f3;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    color: #000;
+}
+
+/* ESTILOS FORZADOS PARA TEXTO NEGRO EN CARDS */
+.page-dispositivo ion-card {
+    font-family: 'Roboto', Arial, sans-serif;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    padding: 1.2rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    --color: #000 !important;
+}
+
+.page-dispositivo ion-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.page-dispositivo ion-card-header {
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Especificidad máxima para texto negro */
+.page-dispositivo ion-card * {
+    color: #000000 !important;
+    --color: #000000 !important;
+}
+
+.page-dispositivo ion-card ion-card-title,
+.page-dispositivo ion-card .ion-card-title,
+.page-dispositivo ion-card [class*="card-title"] {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #000000 !important;
+    --color: #000000 !important;
+}
+
+.page-dispositivo ion-card ion-card-content,
+.page-dispositivo ion-card p,
+.page-dispositivo ion-card strong {
+    color: #000000 !important;
+    --color: #000000 !important;
+}
+
+.page-dispositivo .status {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 10px 0;
+}
+
+.page-dispositivo .status .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #00b894;
+}
+
+.page-dispositivo .status .dot.off {
+    background: #d63031;
+}
+
+.page-dispositivo .status span {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.page-dispositivo .acciones {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 15px;
+}
+
+.page-dispositivo .acciones ion-button {
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+    transition: transform 0.2s ease;
+    --color: #000;
+}
+
+.page-dispositivo .acciones ion-button:hover {
+    transform: scale(1.05);
+}
+
+.page-dispositivo .acciones ion-button.encender {
+    --background: #00b894;
+    --background-hover: #00cec9;
+}
+
+.page-dispositivo .acciones ion-button.apagar {
+    --background: #d63031;
+    --background-hover: #e17055;
+}
+
+.page-dispositivo .ultima-medicion {
+    background: #f3fbfa;
+    border: 1px solid #c7f5ea;
+    border-radius: 14px;
+    padding: 1rem;
+}
+
+.page-dispositivo .ultima-medicion h3 {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.page-dispositivo .ultima-medicion p {
+    font-weight: 400;
+    font-size: 0.95rem;
+    margin: 0.25rem 0;
+}
+
+/* Regla general para asegurar que todos los textos sean negros */
+.page-dispositivo ion-label, 
+.page-dispositivo ion-card-title, 
+.page-dispositivo ion-card-content, 
+.page-dispositivo ion-item, 
+.page-dispositivo span, 
+.page-dispositivo p {
+    color: #000000 !important;
+    --color: #000000 !important;
+}
+
+/* Selectores de alta especificidad para Ionic */
+.page-dispositivo .md ion-card .item,
+.page-dispositivo .ios ion-card .item {
+    --color: #000000 !important;
+}
+
+.page-dispositivo .md ion-card p,
+.page-dispositivo .ios ion-card p {
+    color: #000000 !important;
+}

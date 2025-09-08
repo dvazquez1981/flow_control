@@ -1,0 +1,99 @@
+/* medicion.page.scss */
+
+:host {
+  display: block;
+  min-height: 100%;
+  background: #f4f7fb;
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  color: #000; /* Texto negro por defecto */
+}
+
+/* Header */
+ion-header ion-toolbar {
+  --background: linear-gradient(135deg, #157f6b, #1fbf9b);
+  color: #000; /* título negro */
+  box-shadow: 0 2px 8px rgba(23, 42, 58, 0.06);
+}
+
+/* Content spacing */
+ion-content {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  color: #000;
+}
+
+/* List container */
+ion-list {
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  ion-item {
+    --background: #ffffff;
+    --inner-padding-start: 14px;
+    --inner-padding-end: 14px;
+    border-radius: 12px;
+    box-shadow: 0 6px 14px rgba(31, 47, 63, 0.06);
+    align-items: center;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition: transform .15s ease, box-shadow .15s ease;
+    color: #000 !important; /* texto negro sólido */
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(31, 47, 63, 0.09);
+    }
+
+    /* Layout interno: fecha a la izquierda, valor a la derecha */
+    .medicion-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 12px;
+    }
+
+    /* Fecha: monoespaciada */
+    .medicion-fecha {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.87rem;
+      color: #000; /* negro sólido */
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 65%;
+    }
+
+    /* Valor destacado */
+    .medicion-valor {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: #000; /* negro sólido */
+      background: rgba(11,107,90,0.08); /* mantengo verde tenue */
+      padding: 6px 10px;
+      border-radius: 999px;
+      min-width: 78px;
+      text-align: center;
+    }
+
+    /* Placeholder / loading */
+    &.loading {
+      --background: linear-gradient(90deg, #f6fbfa, #f8fbff);
+      color: #000; /* negro sólido */
+      justify-content: center;
+      height: 56px;
+      font-style: italic;
+    }
+  }
+}
+
+/* Responsive: en pantallas muy chicas ajustar tamaños */
+@media (max-width: 360px) {
+  .medicion-fecha { max-width: 60%; font-size: 0.82rem; }
+  .medicion-valor { font-size: 0.9rem; padding: 5px 8px; min-width: 64px; }
+}
