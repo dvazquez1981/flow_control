@@ -15,7 +15,7 @@ const awdb = new Sequelize('DAM', 'root', 'userpass', {
     },
   });
   
-  // Conexión y backup cada 3 minutos
+  // Conexión 
   (async () => {
     try {
       await awdb.authenticate();
