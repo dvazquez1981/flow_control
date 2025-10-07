@@ -1,0 +1,101 @@
+CREATE TABLE [dbo].[tipousuario] ( 
+  [TU_Id] INT IDENTITY NOT NULL,
+  [TU_Descripcion] VARCHAR(50) NOT NULL CONSTRAINT [DF__tipousuar__TU_De__5EBF139D] DEFAULT ('') ,
+  CONSTRAINT [PK__tipousua__6078951C03317E3D] PRIMARY KEY ([TU_Id])
+);
+CREATE TABLE [dbo].[usuario] ( 
+  [USR_Id] INT IDENTITY NOT NULL,
+  [USR_Nombre] VARCHAR(1) NULL,
+  [USR_Creado_En] DATETIME NULL,
+  [USR_TipoUsuario] INT NULL,
+  CONSTRAINT [PK__usuario__91DE221607020F21] PRIMARY KEY ([USR_Id])
+);
+CREATE TABLE [dbo].[asignacion] ( 
+  [ASI_Id] INT IDENTITY NOT NULL,
+  [ASI_Idtramo] INT NULL,
+  [ASI_IdUsuario] INT NULL,
+  [ASI_IdGRD] INT NULL,
+  [ASI_Creado_En] DATETIME NULL,
+  CONSTRAINT [PK__asignaci__E96704702D27B809] PRIMARY KEY ([ASI_Id])
+);
+CREATE TABLE [dbo].[historial] ( 
+  [HIST_Id] INT IDENTITY NOT NULL,
+  [HIST_IdAsignacion] INT NULL,
+  [HIST_FechaI] DATETIME NULL,
+  [HIST_FechaF] DATETIME NULL,
+  CONSTRAINT [PK__historia__32BEDDF03D5E1FD2] PRIMARY KEY ([HIST_Id])
+);
+CREATE TABLE [dbo].[tipoerror] ( 
+  [TE_Id] INT IDENTITY NOT NULL,
+  [TE_Descripcion] VARCHAR(50) NOT NULL CONSTRAINT [DF__tipoerror__TE_De__5FB337D6] DEFAULT ('') ,
+  CONSTRAINT [PK__tipoerro__B9ECDAF046E78A0C] PRIMARY KEY ([TE_Id])
+);
+CREATE TABLE [dbo].[error] ( 
+  [ERROR_Id] INT IDENTITY NOT NULL,
+  [ERROR_IdGRD] INT NULL,
+  [ERROR_TipoError] INT NULL,
+  [ERROR_Fecha] DATETIME NULL,
+  CONSTRAINT [PK__error__88C516C94AB81AF0] PRIMARY KEY ([ERROR_Id])
+);
+CREATE TABLE [dbo].[configuracion] ( 
+  [CONF_Id] INT IDENTITY NOT NULL,
+  [CONF_IdGRD] INT NULL,
+  [CONF_Valor1] INT NULL,
+  [CONF_Valor2] INT NULL,
+  [CONF_Valor3] INT NULL,
+  [CONF_FechaVigencia] DATETIME NULL,
+  [CONF_Param1] VARCHAR(50) NULL CONSTRAINT [DF__configura__CONF___628FA481] DEFAULT (NULL) ,
+  [CONF_Param2] VARCHAR(50) NULL CONSTRAINT [DF__configura__CONF___6383C8BA] DEFAULT (NULL) ,
+  [CONF_Param3] VARCHAR(50) NULL CONSTRAINT [DF__configura__CONF___6477ECF3] DEFAULT (NULL) ,
+  CONSTRAINT [PK__configur__3A26C92352593CB8] PRIMARY KEY ([CONF_Id])
+);
+CREATE TABLE [dbo].[tipocontador] ( 
+  [TC_Id] INT IDENTITY NOT NULL,
+  [TC_TipoContador] VARCHAR(50) NOT NULL CONSTRAINT [DF__tipoconta__TC_Ti__60A75C0F] DEFAULT ('') ,
+  CONSTRAINT [PK__tipocont__2A3483BE571DF1D5] PRIMARY KEY ([TC_Id])
+);
+CREATE TABLE [dbo].[grdtipocontador] ( 
+  [gtc_Id] INT IDENTITY NOT NULL,
+  [gtc_IdGRD] INT NULL,
+  [gtc_IdTipoContador] INT NULL,
+  [gtc_FechaI] DATETIME NULL,
+  [gtc_FechaF] DATETIME NULL,
+  CONSTRAINT [PK__grdtipoc__20D575715AEE82B9] PRIMARY KEY ([gtc_Id])
+);
+CREATE TABLE [dbo].[grd] ( 
+  [GRD_Id] INT IDENTITY NOT NULL,
+  [GRD_Descripcion] VARCHAR(50) NOT NULL CONSTRAINT [DF__grd__GRD_Descrip__619B8048] DEFAULT ('') ,
+  CONSTRAINT [PK__grd__0A86D1887F60ED59] PRIMARY KEY ([GRD_Id])
+);
+SET IDENTITY_INSERT [dbo].[tipousuario] ON;
+INSERT INTO [dbo].[tipousuario] ([TU_Id], [TU_Descripcion]) VALUES (3, 'administrador');
+INSERT INTO [dbo].[tipousuario] ([TU_Id], [TU_Descripcion]) VALUES (4, 'usuario_solodescarga');
+SET IDENTITY_INSERT [dbo].[tipousuario] OFF;
+SET IDENTITY_INSERT [dbo].[usuario] ON;
+SET IDENTITY_INSERT [dbo].[usuario] OFF;
+SET IDENTITY_INSERT [dbo].[asignacion] ON;
+SET IDENTITY_INSERT [dbo].[asignacion] OFF;
+SET IDENTITY_INSERT [dbo].[historial] ON;
+SET IDENTITY_INSERT [dbo].[historial] OFF;
+SET IDENTITY_INSERT [dbo].[tipoerror] ON;
+SET IDENTITY_INSERT [dbo].[tipoerror] OFF;
+SET IDENTITY_INSERT [dbo].[error] ON;
+SET IDENTITY_INSERT [dbo].[error] OFF;
+SET IDENTITY_INSERT [dbo].[configuracion] ON;
+SET IDENTITY_INSERT [dbo].[configuracion] OFF;
+SET IDENTITY_INSERT [dbo].[tipocontador] ON;
+INSERT INTO [dbo].[tipocontador] ([TC_Id], [TC_TipoContador]) VALUES (1, 'DTEC');
+SET IDENTITY_INSERT [dbo].[tipocontador] OFF;
+SET IDENTITY_INSERT [dbo].[grdtipocontador] ON;
+SET IDENTITY_INSERT [dbo].[grdtipocontador] OFF;
+SET IDENTITY_INSERT [dbo].[grd] ON;
+SET IDENTITY_INSERT [dbo].[grd] OFF;
+ALTER TABLE [dbo].[usuario] ADD CONSTRAINT [FK__usuario__USR_Tip__09DE7BCC] FOREIGN KEY ([USR_TipoUsuario]) REFERENCES [dbo].[tipousuario] ([TU_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[asignacion] ADD CONSTRAINT [FK_USUARIOASIGNACION] FOREIGN KEY ([ASI_IdUsuario]) REFERENCES [dbo].[usuario] ([USR_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[asignacion] ADD CONSTRAINT [FK_ASIGNACIONGRD] FOREIGN KEY ([ASI_IdGRD]) REFERENCES [dbo].[grd] ([GRD_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[historial] ADD CONSTRAINT [FK_HistorialAsociacion] FOREIGN KEY ([HIST_IdAsignacion]) REFERENCES [dbo].[asignacion] ([ASI_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[error] ADD CONSTRAINT [FK_ErrorGRD] FOREIGN KEY ([ERROR_IdGRD]) REFERENCES [dbo].[grd] ([GRD_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[error] ADD CONSTRAINT [FK_ErrorTipoError] FOREIGN KEY ([ERROR_TipoError]) REFERENCES [dbo].[tipoerror] ([TE_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[configuracion] ADD CONSTRAINT [FK_ConfiguracionGRD] FOREIGN KEY ([CONF_IdGRD]) REFERENCES [dbo].[grd] ([GRD_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[grdtipocontador] ADD CONSTRAINT [FK_grdtipocontador1] FOREIGN KEY ([gtc_IdGRD]) REFERENCES [dbo].[grd] ([GRD_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[grdtipocontador] ADD CONSTRAINT [FK_grdtipocontador2] FOREIGN KEY ([gtc_IdTipoContador]) REFERENCES [dbo].[tipocontador] ([TC_Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;

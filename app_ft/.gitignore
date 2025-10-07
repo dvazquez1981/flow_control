@@ -91,3 +91,6 @@ db/data/
 src/frontend/js
 
 
+app_ft/mosquitto/data/mosquitto.db
+app_ft/mosquitto/data/
+mosquitto/data/
