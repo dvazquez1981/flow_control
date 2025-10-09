@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const mysql2 = require('mysql2');
 
-const awdb = new Sequelize('DAM', 'root', 'userpass', {
+const ftdb = new Sequelize('flow_control', 'root', 'userpass', {
     host: 'mysql-server',
     port: 3306,
     dialect: 'mysql',
@@ -26,4 +26,4 @@ const awdb = new Sequelize('DAM', 'root', 'userpass', {
     }
   })();
   
-  module.exports = awdb;
+  module.exports = ftdb;

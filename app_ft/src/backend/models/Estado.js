@@ -2,8 +2,8 @@ const  ftdb= require('../bd/ftdb.js');
 const { Sequelize, DataTypes } = require('sequelize');
 
 /** Defino modelo de los datos */
-const Medicion=ftdb.define('Medicion',{
-     medicionId: {
+const Estado=ftdb.define('Estado',{
+     estadoId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
@@ -13,25 +13,21 @@ const Medicion=ftdb.define('Medicion',{
         type:  DataTypes.DATE,
         allowNull: false
       },
+     
+      tipoEstadoId:{
+      type: DataTypes.INTEGER,
+      allowNull: false
+      },
       valor: {
        type: DataTypes.INTEGER,
         allowNull: false
-      },
-      carril: {
-       type: DataTypes.INTEGER,
-      allowNull: false
-      },
-    clasificacionId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
       },
       dispositivoId: {
         type: DataTypes.INTEGER,
         allowNull: false
       }
     }, {
-    tableName: 'Medicion',
+    tableName: 'Estado',
     timestamps: false
 });
-module.exports = Medicion ;
-
+module.exports = Estado;

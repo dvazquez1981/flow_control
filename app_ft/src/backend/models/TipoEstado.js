@@ -1,30 +1,26 @@
 const  ftdb=require('../bd/ftdb.js');
 
-
 const { Sequelize, DataTypes } = require('sequelize');
 
 /** Defino modelo de los datos */
-const Dispositivo =ftdb.define('Dispositivo',{
-     dispositivoId: {
+const TipoEstado =ftdb.define('TipoEstado',{
+     tipoEstadoId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true 
       },
-      nombre: {
+      descripcion: {
         type: DataTypes.STRING(64),
         allowNull: false
       },
-      ubicacion: {
-        type: DataTypes.STRING(128),
-        allowNull: false
-      },
       tipoContadorId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+      type: DataTypes.STRING(64),
+       allowNull: false
       }
     }, {
-    tableName: 'Dispositivo',
+    tableName: 'TipoContador',
     timestamps: false
 });
-module.exports = Dispositivo ;
+module.exports = TipoEstado;
+

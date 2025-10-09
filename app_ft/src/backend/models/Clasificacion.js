@@ -1,21 +1,25 @@
-const  awdb=require('../bd/awdb.js');
+const  ftdb=require('../bd/ftdb.js');
 
 const { Sequelize, DataTypes } = require('sequelize');
 
 /** Defino modelo de los datos */
-const Electrovalvula =awdb.define('Electrovalvulas',{
-     electrovalvulaId: {
+const Clasificacion =ftdb.define('Clasificacion',{
+     clasificacionId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true 
-      },
-      nombre: {
+     },
+      descripcion: {
         type: DataTypes.STRING(64),
+        allowNull: false
+      },
+      tipoContadorId: {
+        type: DataTypes.INTEGER,
         allowNull: false
       }
     }, {
-    tableName: 'Electrovalvulas',
+    tableName: 'Clasificacion',
     timestamps: false
 });
-module.exports = Electrovalvula;
+module.exports = Clasificacion;

@@ -1,9 +1,9 @@
 
-const  awdb=require('../bd/awdb.js');
+const  ftdb=require('../bd/ftdb.js');
 const { Sequelize, DataTypes } = require('sequelize');
 
 
-const Usuario= awdb.define('Usuario',{
+const Usuario=ftdb.define('Usuario',{
     userId:{
         type: DataTypes.INTEGER,
         allowNull: false,

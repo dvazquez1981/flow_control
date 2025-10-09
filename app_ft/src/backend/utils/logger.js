@@ -29,7 +29,7 @@ const logger = winston.createLogger({
             : winston.format.json()
     ),
     transports: [
-        new winston.transports.File({ filename: path.join(logDir, 'DAM.log'), level: 'debug' }),
+        new winston.transports.File({ filename: path.join(logDir, 'ft.log'), level: 'debug' }),
         new winston.transports.Console(),
     ],
 });

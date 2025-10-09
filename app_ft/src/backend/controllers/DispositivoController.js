@@ -1,5 +1,5 @@
 
-const Electrovalvula = require('../models/Electrovalvula.js');
+const Electrovalvula = require('../models/GrupoUsuario.js');
 const Dispositivo = require('../models/Dispositivo.js');
 const {sanitize}  = require('../utils/sanitize.js');
 

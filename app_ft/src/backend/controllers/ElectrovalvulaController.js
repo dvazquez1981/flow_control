@@ -1,4 +1,4 @@
-const Electrovalvula = require('../models/Electrovalvula.js');
+const Electrovalvula = require('../models/GrupoUsuario.js');
 const {sanitize}  = require('../utils/sanitize.js');
 
 async function getAll(req, res) {
