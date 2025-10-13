@@ -1,6 +1,3 @@
-
-
-
 const Usuario  = require('../models/Usuario.js');
 const jwt = require('jsonwebtoken');
 const moment= require('moment-timezone');

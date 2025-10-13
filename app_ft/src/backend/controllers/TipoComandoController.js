@@ -1,6 +1,5 @@
-// app_ft/src/backend/controllers/tipoComandoController.js
-
 const TipoComando = require('../models/TipoComando.js');
+const TipoContador= require('../models/TipoContador.js')
 const { sanitize } = require('../utils/sanitize.js');
 
 /** Obtener todos los tipos de comando */
@@ -70,6 +69,15 @@ async function crearTipoComando(req, res) {
   }
 
   try {
+
+
+    const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoContadorId} });
+    if (!existenteTipoContador) {
+      console.log('El tipo de contador no existe.');
+      return res.status(409).json({ message: 'El tipo de contador ya existe.', status: 0 });
+    }
+
+
     const existente = await TipoComando.findOne({ where: { descripcion } });
     if (existente) {
       console.log('El tipo de comando ya existe.');
@@ -103,6 +111,23 @@ async function updateTipoComando(req, res) {
   }
 
   try {
+     
+    let numeroTipoContadorId = undefined;
+    if (tipoContadorId !== undefined) {
+     numeroTipoContadorId = parseInt(tipoContadorId);
+     if (isNaN(numeroTipoContadorId)) {
+      return res.status(400).json({ message: 'El valor de tipoContadorId no es un número', status: 0 });
+    }
+
+    const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoContadorId  } });
+    if (!existenteTipoContador) {
+      console.log('El tipo de contador no existe.');
+      return res.status(409).json({ message: 'El tipo de contador ya existe.', status: 0 });
+    }
+    
+}
+
+
     const tipo = await TipoComando.findOne({ where: { tipoComandId: numeroTipoComandId } });
     if (!tipo) {
       console.log("Tipo de comando no encontrado");
@@ -110,7 +135,7 @@ async function updateTipoComando(req, res) {
     }
 
     tipo.descripcion = descripcion ?? tipo.descripcion;
-    tipo.tipoContadorId = tipoContadorId ?? tipo.tipoContadorId;
+    tipo.tipoContadorId = numeroTipoContadorId ?? tipo.tipoContadorId;
 
     await tipo.save();
 
