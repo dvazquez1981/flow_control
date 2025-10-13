@@ -63,6 +63,9 @@ client.on('message', async (topic, payload) => {
       //Validar formato del mensaje
       const { fecha, valor, carril, clasificacionId  } = msg;
 
+      console.log(`MQTT Ingreso Medicion : dispositivoId=${dispositivoId}, fecha=${fecha}, valor=${valor}, carril=${carril}, clasificacionId=${clasificacionId}`);
+
+
      if ([fecha, valor, carril, clasificacionId ].some(v => v === undefined)) {
         console.error(`MQTT mensaje incompleto recibido en /dispositivo/${dispositivoId}/medicion`);
         return;
@@ -132,6 +135,9 @@ client.on('message', async (topic, payload) => {
 
 
             const { fecha, cmdId, valor } = msg;
+
+            console.log(`MQTT Ingreso respuesta :  fecha=${fecha}, valor=${valor}, cmdId=${cmdId}`);
+
            if ([fecha,cmdId, valor ].some(v => v === undefined)) {
                 console.error(`MQTT mensaje incompleto recibido en /dispositivo/${dispositivoId}/respuesta`);
                 return;
