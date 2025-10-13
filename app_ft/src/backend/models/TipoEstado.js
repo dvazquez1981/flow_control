@@ -19,7 +19,7 @@ const TipoEstado =ftdb.define('TipoEstado',{
        allowNull: false
       }
     }, {
-    tableName: 'TipoContador',
+    tableName: 'TipoEstado',
     timestamps: false
 });
 module.exports = TipoEstado;

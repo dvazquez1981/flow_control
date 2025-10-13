@@ -1,23 +1,18 @@
-// app_ft/src/backend/controllers/logEventoController.js
-
 const LogEvento = require('../models/LogEvento.js');
 const { sanitize } = require('../utils/sanitize.js');
 
 /** Obtener todos los logs de evento */
 async function getAll(req, res) {
   try {
-    console.log('Obtengo todos los logs de evento');
     const logs = await LogEvento.findAll();
-
-    if (logs && logs.length > 0) {
+    if (logs) {
       res.status(200).json(sanitize(logs));
     } else {
       console.log('No se encontraron logs de evento.');
       res.status(404).json({ message: 'No se encontraron logs de evento.' });
     }
-
   } catch (error) {
-    console.error('Error al obtener logs de evento:', error.message);
+    console.error('Error al obtener los logs de evento:', error);
     res.status(500).json({ error: error.message });
   }
 }
@@ -25,7 +20,6 @@ async function getAll(req, res) {
 /** Obtener un log de evento por ID */
 async function getOne(req, res) {
   const { logId } = req.params;
-  console.log("get logId:", logId);
 
   if (logId === undefined) {
     console.log('logId es obligatorio');
@@ -41,30 +35,28 @@ async function getOne(req, res) {
   try {
     const log = await LogEvento.findOne({ where: { logId: numeroLogId } });
     if (log) {
-      console.log("Log encontrado");
       res.status(200).json(sanitize(log));
     } else {
-      console.log("No se encontró el log");
-      res.status(404).json({ message: 'No se encuentra el log de evento.' });
+      console.log("Log de evento no encontrado");
+      res.status(404).json({ message: 'Log de evento no encontrado.' });
     }
   } catch (error) {
-    console.error('Error al buscar log de evento:', error.message);
-    res.status(500).json({ message: 'Algo salió mal', error: error.message });
+    console.error('Error al obtener el log de evento:', error);
+    res.status(500).json({ message: 'Algo salió mal', data: { error } });
   }
 }
 
 /** Crear un nuevo log de evento */
 async function crearLogEvento(req, res) {
   const { fecha, tipo, entidad, entidadId, mensaje, dispositivoId, userId } = req.body;
-  console.log("crearLogEvento:", fecha, tipo, entidad, entidadId, mensaje, dispositivoId, userId);
 
-  if ([fecha, tipo, entidad, entidadId, mensaje, dispositivoId, userId].some(v => v === undefined)) {
-    console.log('Todos los campos son obligatorios.');
-    return res.status(400).json({ message: 'Todos los campos son obligatorios', status: 0 });
+  if (!fecha || !tipo || !entidad || !entidadId || !mensaje || !dispositivoId || !userId) {
+    console.log('Faltan datos obligatorios para crear el log de evento');
+    return res.status(400).json({ message: 'Faltan datos obligatorios', status: 0 });
   }
 
   try {
-    const nuevoLog = await LogEvento.create({
+    const newLog = await LogEvento.create({
       fecha,
       tipo,
       entidad,
@@ -74,12 +66,11 @@ async function crearLogEvento(req, res) {
       userId
     });
 
-    console.log('Log de evento creado con éxito.');
-    res.status(201).json({ message: 'Log creado con éxito.', status: 1, data: sanitize(nuevoLog) });
-
+    console.log('Log de evento creado con éxito');
+    res.status(201).json({ message: 'Log creado con éxito', status: 1, data: sanitize(newLog) });
   } catch (error) {
     console.error('Error al crear el log de evento:', error);
-    res.status(500).json({ message: 'Ocurrió un error inesperado.', status: 0, error: error.message });
+    res.status(500).json({ message: 'Ocurrió un error inesperado', status: 0, error: error.message });
   }
 }
 
@@ -102,8 +93,8 @@ async function updateLogEvento(req, res) {
   try {
     const log = await LogEvento.findOne({ where: { logId: numeroLogId } });
     if (!log) {
-      console.log("Log no encontrado");
-      return res.status(404).json({ message: 'Log no encontrado.' });
+      console.log("Log de evento no encontrado");
+      return res.status(404).json({ message: 'Log de evento no encontrado.' });
     }
 
     log.fecha = fecha ?? log.fecha;
@@ -116,11 +107,10 @@ async function updateLogEvento(req, res) {
 
     await log.save();
 
-    console.log(`logId: ${numeroLogId} actualizado correctamente`);
-    res.status(200).json({ message: 'Log actualizado correctamente.' });
-
+    console.log("logId:", numeroLogId, "actualizado correctamente");
+    res.status(200).json({ message: 'Log de evento actualizado correctamente.' });
   } catch (error) {
-    console.error('Error al actualizar log de evento:', error);
+    console.error('Error al actualizar el log de evento:', error);
     res.status(500).json({ message: 'Hubo un error al actualizar', error: error.message });
   }
 }
@@ -141,18 +131,18 @@ async function deleteLogEvento(req, res) {
   }
 
   try {
-    const deleted = await LogEvento.destroy({ where: { logId: numeroLogId } });
+    const deletedRecord = await LogEvento.destroy({ where: { logId: numeroLogId } });
 
-    if (deleted > 0) {
-      console.log(`logId: ${numeroLogId} se borró correctamente`);
+    if (deletedRecord > 0) {
+      console.log("logId:", numeroLogId, "se borró correctamente");
       res.status(200).json({ message: "Se borró correctamente" });
     } else {
-      console.log(`logId: ${numeroLogId} no existe registro`);
+      console.log("logId:", numeroLogId, "no existe registro");
       res.status(404).json({ message: "No existe registro" });
     }
   } catch (error) {
-    console.error('Error al borrar log:', error);
-    res.status(500).json({ message: 'Hubo un error al borrar', error: error.message });
+    console.error('Error al borrar el log de evento:', error);
+    res.status(500).json({ message: 'Hubo un error', data: { error } });
   }
 }
 
