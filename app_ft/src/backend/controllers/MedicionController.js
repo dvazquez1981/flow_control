@@ -25,7 +25,7 @@ async function getAll(req, res) {
 async function createMedicion(req, res) {
   const { fecha, valor, carril, clasificacionId, dispositivoId } = req.body;
 
-  console.log(`Ingreso: dispositivoId=${dispositivoId}, fecha=${fecha}, valor=${valor}, carril=${carril}, clasificacionId=${clasificacionId}`);
+  console.log(`Ingreso: dispositivoId: ${dispositivoId}, fecha: ${fecha}, valor: ${valor}, carril: ${carril}, clasificacionId: ${clasificacionId}`);
 
   // Validación de campos obligatorios
   if ([fecha, valor, carril, clasificacionId, dispositivoId].includes(undefined)) {
