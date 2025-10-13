@@ -3,6 +3,8 @@
 const ftdb = require('../bd/ftdb.js');
 const { Sequelize, DataTypes } = require('sequelize');
 const Estado = require('../models/Estado.js');
+const Dispositivo = require('../models/Dispositivo.js');
+const TipoEstado = require('../models/TipoEstado.js');
 
 /** Controlador de Estado */
 async function getAll() {
@@ -23,19 +25,63 @@ async function getOne(id) {
   }
 }
 
-async function crearEstado(datos) {
+async function crearEstado(req, res) {
+  const { fecha, tipoEstadoId, valor, dispositivoId } = req.body;
+
+  if (!fecha || tipoEstadoId === undefined || valor === undefined || dispositivoId === undefined) {
+    return res.status(400).json({
+      message: 'fecha, tipoEstadoId, valor y dispositivoId son obligatorios.',
+      status: 0,
+    });
+  }
+
+  const numeroTipoEstadoId = parseInt(tipoEstadoId);
+  const numeroDispositivoId = parseInt(dispositivoId);
+  if (isNaN(numeroTipoEstadoId) || isNaN(numeroDispositivoId)) {
+    return res.status(400).json({
+      message: 'tipoEstadoId y dispositivoId deben ser números.',
+      status: 0,
+    });
+  }
+
   try {
-    return await Estado.create({
-      fecha: datos.fecha,
-      tipoEstadoId: datos.tipoEstadoId,
-      valor: datos.valor,
-      dispositivoId: datos.dispositivoId
+    
+    
+
+
+   const dispositivo = await Dispositivo.findOne({ where: { dispositivoId: numeroDispositivoId } });
+    if (!dispositivo) {
+      return res.status(404).json({ message: 'Dispositivo id debe estar definido.' });
+    }
+   
+    const  tipoContadorId=dispositivo.tipoContadorId;
+    const tipoEstado = await TipoEstado.findOne({ where: { tipoEstadoId: numeroTipoEstadoId, tipoContadorId:tipoContadorId } });
+    
+    if (!tipoEstado) {
+      return res.status(404).json({ message: 'Tipo Estado no esta definido.' });
+    }
+
+
+    const nuevoEstado = await Estado.create({
+      fecha,
+      tipoEstadoId: numeroTipoEstadoId,
+      valor,
+      dispositivoId: numeroDispositivoId,
+    });
+
+    res.status(201).json({
+      message: 'Estado creado con éxito.',
+      status: 1,
+      data: sanitize(nuevoEstado),
     });
   } catch (error) {
     console.error('Error al crear el estado:', error);
-    throw error;
+    res.status(500).json({
+      message: 'Ocurrió un error inesperado.',
+      status: 0,
+      error: error.message,
+    });
   }
-}
 
 async function updateEstado(req, res) {
   const { estadoId } = req.params;
@@ -56,6 +102,19 @@ async function updateEstado(req, res) {
   }
 
   try {
+
+   const dispositivo = await Dispositivo.findOne({ where: { dispositivoId: numeroDispositivoId } });
+    if (!dispositivo) {
+      return res.status(404).json({ message: 'Dispositivo id debe estar definido.' });
+    }
+   
+    const  tipoContadorId=dispositivo.tipoContadorId;
+    const tipoEstado = await TipoEstado.findOne({ where: { tipoEstadoId: numeroTipoEstadoId, tipoContadorId:tipoContadorId } });
+    
+    if (!tipoEstado) {
+      return res.status(404).json({ message: 'Tipo Estado no esta definido.' });
+    }
+
     const estado = await Estado.findOne({ where: { estadoId: numeroEstadoId } });
     if (!estado) {
       return res.status(404).json({ message: 'Estado no encontrado.', status: 0 });
@@ -63,7 +122,7 @@ async function updateEstado(req, res) {
 
     await estado.update({
       fecha: fecha ?? estado.fecha,
-      tipoEstadoId: tipoEstadoId ?? estado.tipoEstadoId,
+      tipoEstadoId: numeroTipoEstadoId ?? estado.tipoEstadoId,
       valor: valor ?? estado.valor,
       dispositivoId: numeroDispositivoId ?? estado.dispositivoId
     });
