@@ -76,7 +76,7 @@ async function crearClasificacion(req, res) {
     const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoId } });
     if (!existenteTipoContador) {
       console.log('El tipo de contador no existe.');
-      return res.status(404).json({ message: 'El tipo de contador ya existe.', status: 0 });
+      return res.status(409).json({ message: 'El tipo de contador ya existe.', status: 0 });
     }
 
     const existente = await Clasificacion.findOne({ where: { descripcion } });
@@ -129,7 +129,7 @@ async function updateClasificacion(req, res) {
     const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoId } });
     if (!existenteTipoContador) {
       console.log('El tipo de contador no existe.');
-      return res.status(404).json({ message: 'El tipo de contador ya existe.', status: 0 });
+      return res.status(409).json({ message: 'El tipo de contador ya existe.', status: 0 });
     }
         
 
