@@ -37,7 +37,7 @@ async function crearEstado(datos) {
   }
 }
 
-sync function updateEstado(req, res) {
+async function updateEstado(req, res) {
   const { estadoId } = req.params;
   const { fecha, tipoEstadoId, valor, dispositivoId } = req.body;
 

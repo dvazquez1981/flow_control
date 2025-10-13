@@ -1,157 +1,154 @@
-// app_ft/src/backend/controllers/logEventoController.js
+// app_ft/src/backend/controllers/clasificacionController.js
 
-const LogEvento = require('../models/LogEvento.js');
+const Clasificacion = require('../models/Clasificacion.js');
 const { sanitize } = require('../utils/sanitize.js');
 
-/** Obtener todos los logs de evento */
+/** Obtener todas las clasificaciones */
 async function getAll(req, res) {
   try {
-    console.log('Obtengo todos los logs de evento');
-    const logs = await LogEvento.findAll();
+    console.log('Obtengo todas las clasificaciones');
+    const clasificaciones = await Clasificacion.findAll();
 
-    if (logs && logs.length > 0) {
-      res.status(200).json(sanitize(logs));
+    if (clasificaciones && clasificaciones.length > 0) {
+      res.status(200).json(sanitize(clasificaciones));
     } else {
-      console.log('No se encontraron logs de evento.');
-      res.status(404).json({ message: 'No se encontraron logs de evento.' });
+      console.log('No se encontraron clasificaciones.');
+      res.status(404).json({ message: 'No se encontraron clasificaciones.' });
     }
 
   } catch (error) {
-    console.error('Error al obtener logs de evento:', error.message);
+    console.error('Error al obtener clasificaciones:', error.message);
     res.status(500).json({ error: error.message });
   }
 }
 
-/** Obtener un log de evento por ID */
+/** Obtener una clasificación por ID */
 async function getOne(req, res) {
-  const { logId } = req.params;
-  console.log("get logId:", logId);
+  const { clasificacionId } = req.params;
+  console.log("get clasificacion id:", clasificacionId);
 
-  if (logId === undefined) {
-    console.log('logId es obligatorio');
-    return res.status(400).json({ message: 'logId es obligatorio', status: 0 });
+  if (clasificacionId === undefined) {
+    console.log('clasificacionId es obligatorio');
+    return res.status(400).json({ message: 'clasificacionId es obligatorio', status: 0 });
   }
 
-  const numeroLogId = parseInt(logId);
-  if (isNaN(numeroLogId)) {
-    console.log('el valor de logId no es un número');
-    return res.status(400).json({ message: 'el valor de logId no es un número', status: 0 });
+  const numeroId = parseInt(clasificacionId);
+  if (isNaN(numeroId)) {
+    console.log('el valor de clasificacionId no es un número');
+    return res.status(400).json({ message: 'el valor de clasificacionId no es un número', status: 0 });
   }
 
   try {
-    const log = await LogEvento.findOne({ where: { logId: numeroLogId } });
-    if (log) {
-      console.log("Log encontrado");
-      res.status(200).json(sanitize(log));
+    const clasificacion = await Clasificacion.findOne({ where: { clasificacionId: numeroId } });
+    if (clasificacion) {
+      console.log("Clasificación encontrada");
+      res.status(200).json(sanitize(clasificacion));
     } else {
-      console.log("No se encontró el log");
-      res.status(404).json({ message: 'No se encuentra el log de evento.' });
+      console.log("No se encontró la clasificación");
+      res.status(404).json({ message: 'No se encuentra la clasificación.' });
     }
   } catch (error) {
-    console.error('Error al buscar log de evento:', error.message);
+    console.error('Error al buscar clasificación:', error.message);
     res.status(500).json({ message: 'Algo salió mal', error: error.message });
   }
 }
 
-/** Crear un nuevo log de evento */
-async function crearLogEvento(req, res) {
-  const { fecha, tipo, entidad, entidadId, mensaje, dispositivoId, userId } = req.body;
-  console.log("crearLogEvento:", fecha, tipo, entidad, entidadId, mensaje, dispositivoId, userId);
+/** Crear una nueva clasificación */
+async function crearClasificacion(req, res) {
+  const { descripcion, tipoContadorId } = req.body;
+  console.log("crearClasificacion:", descripcion, tipoContadorId);
 
-  if ([fecha, tipo, entidad, entidadId, mensaje, dispositivoId, userId].some(v => v === undefined)) {
-    console.log('Todos los campos son obligatorios.');
-    return res.status(400).json({ message: 'Todos los campos son obligatorios', status: 0 });
+  if (!descripcion || tipoContadorId === undefined) {
+    console.log('descripcion y tipoContadorId son obligatorios');
+    return res.status(400).json({ message: 'descripcion y tipoContadorId son obligatorios', status: 0 });
+  }
+
+  const numeroTipoId = parseInt(tipoContadorId);
+  if (isNaN(numeroTipoId)) {
+    console.log('el valor de tipoContadorId no es un número');
+    return res.status(400).json({ message: 'el valor de tipoContadorId no es un número', status: 0 });
   }
 
   try {
-    const nuevoLog = await LogEvento.create({
-      fecha,
-      tipo,
-      entidad,
-      entidadId,
-      mensaje,
-      dispositivoId,
-      userId
-    });
+    const existente = await Clasificacion.findOne({ where: { descripcion } });
+    if (existente) {
+      console.log('La clasificación ya existe.');
+      return res.status(409).json({ message: 'La clasificación ya existe.', status: 0 });
+    }
 
-    console.log('Log de evento creado con éxito.');
-    res.status(201).json({ message: 'Log creado con éxito.', status: 1, data: sanitize(nuevoLog) });
+    const nuevaClasificacion = await Clasificacion.create({ descripcion, tipoContadorId: numeroTipoId });
+    console.log('Clasificación creada con éxito.');
+    res.status(201).json({ message: 'Clasificación creada con éxito.', status: 1, data: sanitize(nuevaClasificacion) });
 
   } catch (error) {
-    console.error('Error al crear el log de evento:', error);
+    console.error('Error al crear la clasificación:', error);
     res.status(500).json({ message: 'Ocurrió un error inesperado.', status: 0, error: error.message });
   }
 }
 
-/** Actualizar un log de evento existente */
-async function updateLogEvento(req, res) {
-  const { logId } = req.params;
-  const { fecha, tipo, entidad, entidadId, mensaje, dispositivoId, userId } = req.body;
+/** Actualizar una clasificación existente */
+async function updateClasificacion(req, res) {
+  const { clasificacionId } = req.params;
+  const { descripcion, tipoContadorId } = req.body;
 
-  if (logId === undefined) {
-    console.log('logId es obligatorio');
-    return res.status(400).json({ message: 'logId es obligatorio', status: 0 });
+  if (clasificacionId === undefined) {
+    console.log('clasificacionId es obligatorio');
+    return res.status(400).json({ message: 'clasificacionId es obligatorio', status: 0 });
   }
 
-  const numeroLogId = parseInt(logId);
-  if (isNaN(numeroLogId)) {
-    console.log('el valor de logId no es un número');
-    return res.status(400).json({ message: 'el valor de logId no es un número', status: 0 });
+  const numeroId = parseInt(clasificacionId);
+  if (isNaN(numeroId)) {
+    console.log('el valor de clasificacionId no es un número');
+    return res.status(400).json({ message: 'el valor de clasificacionId no es un número', status: 0 });
   }
 
   try {
-    const log = await LogEvento.findOne({ where: { logId: numeroLogId } });
-    if (!log) {
-      console.log("Log no encontrado");
-      return res.status(404).json({ message: 'Log no encontrado.' });
+    const clasificacion = await Clasificacion.findOne({ where: { clasificacionId: numeroId } });
+    if (!clasificacion) {
+      console.log("Clasificación no encontrada");
+      return res.status(404).json({ message: 'Clasificación no encontrada.' });
     }
 
-    log.fecha = fecha ?? log.fecha;
-    log.tipo = tipo ?? log.tipo;
-    log.entidad = entidad ?? log.entidad;
-    log.entidadId = entidadId ?? log.entidadId;
-    log.mensaje = mensaje ?? log.mensaje;
-    log.dispositivoId = dispositivoId ?? log.dispositivoId;
-    log.userId = userId ?? log.userId;
+    clasificacion.descripcion = descripcion ?? clasificacion.descripcion;
+    clasificacion.tipoContadorId = tipoContadorId ?? clasificacion.tipoContadorId;
+    await clasificacion.save();
 
-    await log.save();
-
-    console.log(`logId: ${numeroLogId} actualizado correctamente`);
-    res.status(200).json({ message: 'Log actualizado correctamente.' });
+    console.log(`clasificacionId: ${numeroId} actualizado correctamente`);
+    res.status(200).json({ message: 'Clasificación actualizada correctamente.' });
 
   } catch (error) {
-    console.error('Error al actualizar log de evento:', error);
+    console.error('Error al actualizar clasificación:', error);
     res.status(500).json({ message: 'Hubo un error al actualizar', error: error.message });
   }
 }
 
-/** Eliminar un log de evento */
-async function deleteLogEvento(req, res) {
-  const { logId } = req.params;
+/** Eliminar una clasificación */
+async function deleteClasificacion(req, res) {
+  const { clasificacionId } = req.params;
 
-  if (logId === undefined) {
-    console.log('logId es obligatorio');
-    return res.status(400).json({ message: 'logId es obligatorio', status: 0 });
+  if (clasificacionId === undefined) {
+    console.log('clasificacionId es obligatorio');
+    return res.status(400).json({ message: 'clasificacionId es obligatorio', status: 0 });
   }
 
-  const numeroLogId = parseInt(logId);
-  if (isNaN(numeroLogId)) {
-    console.log('el valor de logId no es un número');
-    return res.status(400).json({ message: 'el valor de logId no es un número', status: 0 });
+  const numeroId = parseInt(clasificacionId);
+  if (isNaN(numeroId)) {
+    console.log('el valor de clasificacionId no es un número');
+    return res.status(400).json({ message: 'el valor de clasificacionId no es un número', status: 0 });
   }
 
   try {
-    const deleted = await LogEvento.destroy({ where: { logId: numeroLogId } });
-
+    const deleted = await Clasificacion.destroy({ where: { clasificacionId: numeroId } });
     if (deleted > 0) {
-      console.log(`logId: ${numeroLogId} se borró correctamente`);
+      console.log(`clasificacionId: ${numeroId} se borró correctamente`);
       res.status(200).json({ message: "Se borró correctamente" });
     } else {
-      console.log(`logId: ${numeroLogId} no existe registro`);
+      console.log(`clasificacionId: ${numeroId} no existe registro`);
       res.status(404).json({ message: "No existe registro" });
     }
+
   } catch (error) {
-    console.error('Error al borrar log:', error);
+    console.error('Error al borrar clasificación:', error);
     res.status(500).json({ message: 'Hubo un error al borrar', error: error.message });
   }
 }
@@ -159,7 +156,7 @@ async function deleteLogEvento(req, res) {
 module.exports = {
   getAll,
   getOne,
-  crearLogEvento,
-  updateLogEvento,
-  deleteLogEvento
+  crearClasificacion,
+  updateClasificacion,
+  deleteClasificacion
 };
