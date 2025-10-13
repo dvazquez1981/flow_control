@@ -1,4 +1,6 @@
 const LogEvento = require('../models/LogEvento.js');
+const Dispositivo = require('../models/Dispositivo.js');
+const Usuario  = require('../models/Usuario.js');
 const { sanitize } = require('../utils/sanitize.js');
 
 /** Obtener todos los logs de evento */
@@ -55,15 +57,34 @@ async function crearLogEvento(req, res) {
     return res.status(400).json({ message: 'Faltan datos obligatorios', status: 0 });
   }
 
+
   try {
+
+      let numeroDispositivoId = parseInt(dispositivoId);
+  
+      if (isNaN(numeroDispositivoId)) return res.status(400).json({ message: 'dispositivoId no es un número', status: 0 });
+
+      const dispositivo = await Dispositivo.findByPk(numeroDispositivoId);
+      if (!dispositivo) return res.status(404).json({ message: 'Dispositivo no encontrado', status: 0 }); 
+
+      
+       let numeroUserId = parseInt(userId);
+  
+      if (isNaN(numeroUserId)) return res.status(400).json({ message: 'numeroUserId no es un número', status: 0 });
+
+      const user = await Usuario.findByPk(numeroUserId);
+      if (!user) return res.status(404).json({ message: 'User no encontrado', status: 0 }); 
+
+
+
     const newLog = await LogEvento.create({
       fecha,
       tipo,
       entidad,
       entidadId,
       mensaje,
-      dispositivoId,
-      userId
+      numeroDispositivoId,
+      numeroUserId
     });
 
     console.log('Log de evento creado con éxito');
@@ -91,6 +112,30 @@ async function updateLogEvento(req, res) {
   }
 
   try {
+    let numeroDispositivoId =undefined
+     //Si cambia dispositivo
+    if (dispositivoId !== undefined) {
+      numeroDispositivoId = parseInt(dispositivoId);
+      if (isNaN(numeroDispositivoId)) return res.status(400).json({ message: 'dispositivoId no es un número', status: 0 });
+
+      const dispositivo = await Dispositivo.findByPk(numeroDispositivoId);
+      if (!dispositivo) return res.status(404).json({ message: 'Dispositivo no encontrado', status: 0 });
+        
+     }
+
+
+     let numeroUserId =undefined
+     //Si cambia dispositivo
+    if (userId !== undefined) {
+      numeroUserId  = parseInt(userId);
+      if (isNaN(numeroUserId )) return res.status(400).json({ message: 'userId no es un número', status: 0 });
+
+      const usuario = await Usuario.findByPk(numeroUserId);
+      if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado', status: 0 });
+        
+     }
+
+
     const log = await LogEvento.findOne({ where: { logId: numeroLogId } });
     if (!log) {
       console.log("Log de evento no encontrado");
@@ -102,7 +147,7 @@ async function updateLogEvento(req, res) {
     log.entidad = entidad ?? log.entidad;
     log.entidadId = entidadId ?? log.entidadId;
     log.mensaje = mensaje ?? log.mensaje;
-    log.dispositivoId = dispositivoId ?? log.dispositivoId;
+    log.dispositivoId = numeroDispositivoId ?? log.dispositivoId;
     log.userId = userId ?? log.userId;
 
     await log.save();
