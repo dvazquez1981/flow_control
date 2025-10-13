@@ -26,7 +26,7 @@ client.on('connect', async () => {
 
 
 
-    // Publicar un comando de ejemplo a cada dispositivo
+    //Publicar un comando de ejemplo a cada dispositivo
     for (const d of dispositivos) {
         const cmd = {
             fecha: new Date(),
@@ -53,7 +53,7 @@ client.on('message', async (topic, payload) => {
         return;
     }
 
-    // Identificar dispositivoId desde el topic
+    //Identificar dispositivoId desde el topic
     const matchMedicion = topic.match(/\/dispositivo\/(\d+)\/medicion/);
     const matchRespuesta = topic.match(/\/dispositivo\/(\d+)\/respuesta/);
 

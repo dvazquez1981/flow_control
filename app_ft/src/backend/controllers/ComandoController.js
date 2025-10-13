@@ -4,6 +4,7 @@ const Comando = require('../models/Comando.js');
 const Dispositivo = require('../models/Dispositivo.js');
 const TipoComando = require('../models/TipoComando.js'); 
 const { sanitize } = require('../utils/sanitize.js');
+const mqtt = require('mqtt');
 
 /** Controlador de Comando */
 async function getAll() {
@@ -79,8 +80,23 @@ async function crearComando(req, res) {
       dispositivoId: numeroDispositivoId,
     });
 
+   // Publicar el comando por MQTT
+    const topic = `/dispositivo/${dispositivoId}/comando`;
+    const payload = JSON.stringify({
+      cmdId: nuevoComando.cmdId,
+      tipoComandId,
+      valor,
+      fecha: nuevoComando.fecha
+    });
+
+    client.publish(topic, payload, {}, (err) => {
+      if (err) console.error('Error al publicar comando MQTT:', err);
+      else console.log(`Comando publicado en ${topic}: ${payload}`);
+    });
+
+
     res.status(201).json({
-      message: 'Comando creado con éxito.',
+      message: 'Comando creado con éxito y publicado.',
       status: 1,
       data: sanitize(nuevoComando),
     });
