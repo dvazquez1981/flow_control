@@ -83,76 +83,63 @@ async function crearEstado(req, res) {
 
 }
 
-
 async function updateEstado(req, res) {
   const { estadoId } = req.params;
   const { fecha, tipoEstadoId, valor, dispositivoId } = req.body;
 
-  if (estadoId === undefined) {
-    return res.status(400).json({ message: 'estadoId es obligatorio', status: 0 });
-  }
+  if (!estadoId) return res.status(400).json({ message: 'estadoId es obligatorio', status: 0 });
 
   const numeroEstadoId = parseInt(estadoId);
-  if (isNaN(numeroEstadoId)) {
-    return res.status(400).json({ message: 'el valor de estadoId no es un número', status: 0 });
-  }
-
-  
-  if(tipoEstadoId!==undefined)
-  {
-  var numeroTipoEstadoId = parseInt(tipoEstadoId);
-  const numeroDispositivoId = parseInt(dispositivoId);
-
-  if (isNaN(numeroTipoEstadoId) ) {
-    return res.status(400).json({
-      message: 'tipoEstadoId no es un numero.',
-      status: 0,
-    });
-  }
- if(dispositivoId!==undefined)
-  {
-   const numeroDispositivoId = parseInt(dispositivoId);
-if (isNaN(numeroDispositivoId) ) {
-    return res.status(400).json({
-      message: 'DispositivoId no es un numero.',
-      status: 0,
-    });
-    }
-
-   }
+  if (isNaN(numeroEstadoId)) return res.status(400).json({ message: 'estadoId no es un número', status: 0 });
 
   try {
+    const estado = await Estado.findByPk(numeroEstadoId);
+    if (!estado) return res.status(404).json({ message: 'Estado no encontrado', status: 0 });
 
-   const dispositivo = await Dispositivo.findOne({ where: { dispositivoId: numeroDispositivoId } });
-    if (!dispositivo) {
-      return res.status(404).json({ message: 'Dispositivo id debe estar definido.' });
-    }
-   
-    const  tipoContadorId=dispositivo.tipoContadorId;
-    const tipoEstado = await TipoEstado.findOne({ where: { tipoEstadoId: numeroTipoEstadoId, tipoContadorId:tipoContadorId } });
-    
-    if (!tipoEstado) {
-      return res.status(404).json({ message: 'Tipo Estado no esta definido.' });
+    let numeroDispositivoId = estado.dispositivoId;
+    let numeroTipoEstadoId = estado.tipoEstadoId;
+
+    //Si cambia dispositivo
+    if (dispositivoId !== undefined) {
+      numeroDispositivoId = parseInt(dispositivoId);
+      if (isNaN(numeroDispositivoId)) return res.status(400).json({ message: 'dispositivoId no es un número', status: 0 });
+
+      const dispositivo = await Dispositivo.findByPk(numeroDispositivoId);
+      if (!dispositivo) return res.status(404).json({ message: 'Dispositivo no encontrado', status: 0 });
+
+      // Si también cambia tipoEstadoId, validar que exista para este dispositivo
+      if (tipoEstadoId !== undefined) {
+        numeroTipoEstadoId = parseInt(tipoEstadoId);
+        if (isNaN(numeroTipoEstadoId)) return res.status(400).json({ message: 'tipoEstadoId no es un número', status: 0 });
+
+        const tipoEstado = await TipoEstado.findOne({ where: { tipoEstadoId: numeroTipoEstadoId, tipoContadorId: dispositivo.tipoContadorId } });
+        if (!tipoEstado) return res.status(404).json({ message: 'Tipo Estado no definido para este dispositivo', status: 0 });
+      }
+    } 
+    //Solo cambia tipoEstadoId
+    else if (tipoEstadoId !== undefined) { 
+      numeroTipoEstadoId = parseInt(tipoEstadoId);
+      if (isNaN(numeroTipoEstadoId)) return res.status(400).json({ message: 'tipoEstadoId no es un número', status: 0 });
+
+      const tipoEstado = await TipoEstado.findByPk(numeroTipoEstadoId);
+      if (!tipoEstado) return res.status(404).json({ message: 'Tipo Estado no definido', status: 0 });
     }
 
-    const estado = await Estado.findOne({ where: { estadoId: numeroEstadoId } });
-    if (!estado) {
-      return res.status(404).json({ message: 'Estado no encontrado.', status: 0 });
-    }
-
+    //Actualizar
     await estado.update({
       fecha: fecha ?? estado.fecha,
       tipoEstadoId: numeroTipoEstadoId ?? estado.tipoEstadoId,
       valor: valor ?? estado.valor,
-      dispositivoId: numeroDispositivoId ?? estado.dispositivoId
+      dispositivoId: numeroDispositivoId?? estado.dispositivoId
     });
 
-    res.status(200).json({ message: 'Estado actualizado correctamente.', status: 1, data: sanitize(estado) });
+    res.status(200).json({ message: 'Estado actualizado correctamente', status: 1, data: sanitize(estado) });
   } catch (error) {
     console.error('Error al actualizar estado:', error);
     res.status(500).json({ message: 'Hubo un error', error: error.message });
   }
 }
+
 
 async function deleteEstado(req, res) {
   const { estadoId } = req.params;
