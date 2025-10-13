@@ -1,112 +1,79 @@
-// app_ft/src/backend/controllers/estadoController.js
-
-const Estado = require('../models/Estado.js');
+const ftdb = require('../bd/ftdb.js');
+const { Sequelize } = require('sequelize');
+const Comando = require('../models/Comando.js');
 const Dispositivo = require('../models/Dispositivo.js');
+const TipoComando = require('../models/TipoComando.js'); 
 const { sanitize } = require('../utils/sanitize.js');
 
-async function getAll(req, res) {
+/** Controlador de Comando */
+async function getAll() {
   try {
-    console.log('Obtengo todos los estados');
-    const estados = await Estado.findAll();
-    if (estados && estados.length > 0) {
-      res.status(200).json(sanitize(estados));
-    } else {
-      console.log('No se encontraron estados.');
-      res.status(404).json({ message: 'No se encontraron estados.' });
-    }
+    return await Comando.findAll();
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: error.message });
+    console.error('Error al obtener los comandos:', error);
+    throw error;
   }
 }
 
-async function getOne(req, res) {
-  const { estadoId } = req.params;
-  console.log("get estadoId:", estadoId);
-
-  if (estadoId === undefined) {
-    console.log('estadoId es obligatorio');
-    return res.status(400).json({
-      message: 'estadoId es obligatorio',
-      status: 0,
-    });
-  }
-
-  const numeroEstadoId = parseInt(estadoId);
-  if (isNaN(numeroEstadoId)) {
-    console.log('El valor de estadoId no es un número');
-    return res.status(400).json({
-      message: 'El valor de estadoId no es un número',
-      status: 0,
-    });
-  }
-
+async function getOne(id) {
   try {
-    const estado = await Estado.findOne({ where: { estadoId: numeroEstadoId } });
-    if (estado) {
-      console.log("Estado encontrado");
-      res.status(200).json(sanitize(estado));
-    } else {
-      console.log("No se encontró estado");
-      res.status(404).json({ message: 'No se encuentra el Estado.' });
-    }
+    return await Comando.findByPk(id);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: 'Algo salió mal',
-      data: { error },
-    });
+    console.error('Error al obtener el comando:', error);
+    throw error;
   }
 }
 
-async function crearEstado(req, res) {
-  const { fecha, tipoEstadoId, valor, dispositivoId } = req.body;
-  console.log(`fecha: ${fecha}, tipoEstadoId: ${tipoEstadoId}, valor: ${valor}, dispositivoId: ${dispositivoId}`);
+async function crearComando(req, res) {
+  const { fecha, tipoComandId, valor, dispositivoId } = req.body;
 
-  if (fecha === undefined || tipoEstadoId === undefined || valor === undefined || dispositivoId === undefined) {
-    console.log('Todos los campos son obligatorios.');
+  if (!fecha || tipoComandId === undefined || valor === undefined || dispositivoId === undefined) {
     return res.status(400).json({
-      message: 'fecha, tipoEstadoId, valor y dispositivoId son obligatorios.',
+      message: 'fecha, tipoComandId, valor y dispositivoId son obligatorios.',
       status: 0,
     });
   }
 
+  const numeroTipoComandId = parseInt(tipoComandId);
   const numeroDispositivoId = parseInt(dispositivoId);
-  if (isNaN(numeroDispositivoId)) {
-    console.log('El valor de dispositivoId no es un número');
+
+  if (isNaN(numeroTipoComandId) || isNaN(numeroDispositivoId)) {
     return res.status(400).json({
-      message: 'El valor de dispositivoId no es un número',
+      message: 'tipoComandId y dispositivoId deben ser números.',
       status: 0,
     });
   }
 
   try {
-    const existingDevice = await Dispositivo.findOne({ where: { dispositivoId: numeroDispositivoId } });
-
-    if (!existingDevice) {
-      console.log('El dispositivo no existe.');
-      return res.status(409).json({
-        message: `El dispositivo con ID ${numeroDispositivoId} no existe.`,
-        status: 0,
-      });
+    const dispositivo = await Dispositivo.findByPk(numeroDispositivoId);
+    if (!dispositivo) {
+      return res.status(404).json({ message: 'Dispositivo no encontrado.', status: 0 });
     }
 
-    const nuevoEstado = await Estado.create({
+    // validar tipo de comando asociado al tipo de contador del dispositivo
+    const tipoComando = await TipoComando.findOne({
+      where: { tipoComandId: numeroTipoComandId, tipoContadorId: dispositivo.tipoContadorId },
+    });
+
+    if (!tipoComando) {
+      return res.status(404).json({ message: 'Tipo de comando no válido para este dispositivo.', status: 0 });
+    }
+
+    const nuevoComando = await Comando.create({
       fecha,
-      tipoEstadoId,
+      tipoComandId: numeroTipoComandId,
       valor,
       dispositivoId: numeroDispositivoId,
     });
 
-    console.log('Estado creado con éxito.');
-    return res.status(201).json({
-      message: 'Estado creado con éxito.',
+    res.status(201).json({
+      message: 'Comando creado con éxito.',
       status: 1,
-      data: sanitize(nuevoEstado),
+      data: sanitize(nuevoComando),
     });
   } catch (error) {
-    console.error('Error al crear el estado:', error);
-    return res.status(500).json({
+    console.error('Error al crear el comando:', error);
+    res.status(500).json({
       message: 'Ocurrió un error inesperado.',
       status: 0,
       error: error.message,
@@ -114,122 +81,101 @@ async function crearEstado(req, res) {
   }
 }
 
-async function updateEstado(req, res) {
-  const { estadoId } = req.params;
-  const { fecha, tipoEstadoId, valor, dispositivoId } = req.body;
-  console.log(`estadoId: ${estadoId}, fecha: ${fecha}, tipoEstadoId: ${tipoEstadoId}, valor: ${valor}, dispositivoId: ${dispositivoId}`);
+async function updateComando(req, res) {
+  const { cmdId } = req.params;
+  const { fecha, tipoComandId, valor, dispositivoId } = req.body;
 
-  if (estadoId === undefined) {
-    console.log('estadoId es obligatorio');
-    return res.status(400).json({
-      message: 'estadoId es obligatorio',
-      status: 0,
-    });
-  }
+  if (!cmdId) return res.status(400).json({ message: 'cmdId es obligatorio', status: 0 });
 
-  const numeroEstadoId = parseInt(estadoId);
-  if (isNaN(numeroEstadoId)) {
-    console.log('El valor de estadoId no es un número');
-    return res.status(400).json({
-      message: 'El valor de estadoId no es un número',
-      status: 0,
-    });
-  }
-
-  let numeroDispositivoId = undefined;
-  if (dispositivoId !== undefined) {
-    numeroDispositivoId = parseInt(dispositivoId);
-    if (isNaN(numeroDispositivoId)) {
-      console.log('El valor de dispositivoId no es un número');
-      return res.status(400).json({
-        message: 'El valor de dispositivoId no es un número',
-        status: 0,
-      });
-    }
-  }
+  const numeroCmdId = parseInt(cmdId);
+  if (isNaN(numeroCmdId)) return res.status(400).json({ message: 'cmdId no es un número', status: 0 });
 
   try {
-    const estado = await Estado.findOne({ where: { estadoId: numeroEstadoId } });
+    const comando = await Comando.findByPk(numeroCmdId);
+    if (!comando) return res.status(404).json({ message: 'Comando no encontrado', status: 0 });
 
-    if (!estado) {
-      console.log(`estadoId: ${numeroEstadoId} no encontrado`);
-      return res.status(404).json({ message: 'Estado no encontrado.' });
-    }
+    let numeroDispositivoId = comando.dispositivoId;
+    let numeroTipoComandId = comando.tipoComandId;
 
-    if (numeroDispositivoId !== undefined) {
-      const existingDevice = await Dispositivo.findOne({ where: { dispositivoId: numeroDispositivoId } });
+    // Si cambia el dispositivo
+    if (dispositivoId !== undefined) {
+      numeroDispositivoId = parseInt(dispositivoId);
+      if (isNaN(numeroDispositivoId)) return res.status(400).json({ message: 'dispositivoId no es un número', status: 0 });
 
-      if (!existingDevice) {
-        console.log(`El dispositivo con ID ${numeroDispositivoId} no existe.`);
-        return res.status(409).json({
-          message: `El dispositivo con ID ${numeroDispositivoId} no existe.`,
-          status: 0,
+      const dispositivo = await Dispositivo.findByPk(numeroDispositivoId);
+      if (!dispositivo) return res.status(404).json({ message: 'Dispositivo no encontrado', status: 0 });
+
+      // Si también cambia el tipo de comando
+      if (tipoComandId !== undefined) {
+        numeroTipoComandId = parseInt(tipoComandId);
+        if (isNaN(numeroTipoComandId)) return res.status(400).json({ message: 'tipoComandId no es un número', status: 0 });
+
+        const tipoComando = await TipoComando.findOne({
+          where: { tipoComandId: numeroTipoComandId, tipoContadorId: dispositivo.tipoContadorId },
         });
+
+        if (!tipoComando) return res.status(404).json({ message: 'Tipo de comando no válido para este dispositivo', status: 0 });
       }
     }
+    // Solo cambia tipoComandId
+    else if (tipoComandId !== undefined) {
+      numeroTipoComandId = parseInt(tipoComandId);
+      if (isNaN(numeroTipoComandId)) return res.status(400).json({ message: 'tipoComandId no es un número', status: 0 });
 
-    // Actualizo usando ?? para no sobreescribir campos existentes
-    estado.fecha = fecha ?? estado.fecha;
-    estado.tipoEstadoId = tipoEstadoId ?? estado.tipoEstadoId;
-    estado.valor = valor ?? estado.valor;
-    estado.dispositivoId = numeroDispositivoId ?? estado.dispositivoId;
+      const dispositivo = await Dispositivo.findByPk(comando.dispositivoId);
+      if (!dispositivo) return res.status(404).json({ message: 'Dispositivo actual del comando no encontrado', status: 0 });
 
-    await estado.save();
+      const tipoComando = await TipoComando.findOne({
+        where: { tipoComandId: numeroTipoComandId, tipoContadorId: dispositivo.tipoContadorId },
+      });
 
-    console.log(`estadoId: ${numeroEstadoId} se actualizó correctamente`);
-    res.status(200).json({ message: 'Estado actualizado correctamente.' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: 'Algo no funcionó',
-      data: { error },
+      if (!tipoComando) return res.status(404).json({ message: 'Tipo de comando no válido para el dispositivo actual', status: 0 });
+    }
+
+    await comando.update({
+      fecha: fecha ?? comando.fecha,
+      tipoComandId: numeroTipoComandId ?? comando.tipoComandId,
+      valor: valor ?? comando.valor,
+      dispositivoId: numeroDispositivoId ?? comando.dispositivoId,
     });
+
+    res.status(200).json({ message: 'Comando actualizado correctamente', status: 1, data: sanitize(comando) });
+  } catch (error) {
+    console.error('Error al actualizar comando:', error);
+    res.status(500).json({ message: 'Hubo un error', error: error.message });
   }
 }
 
-async function deleteEstado(req, res) {
-  const { estadoId } = req.params;
+async function deleteComando(req, res) {
+  const { cmdId } = req.params;
 
-  if (estadoId === undefined) {
-    console.log('estadoId es obligatorio');
-    return res.status(400).json({
-      message: 'estadoId es obligatorio',
-      status: 0,
-    });
+  if (cmdId === undefined) {
+    return res.status(400).json({ message: 'cmdId es obligatorio', status: 0 });
   }
 
-  const numeroEstadoId = parseInt(estadoId);
-  if (isNaN(numeroEstadoId)) {
-    console.log('El valor de estadoId no es un número');
-    return res.status(400).json({
-      message: 'El valor de estadoId no es un número',
-      status: 0,
-    });
+  const numeroCmdId = parseInt(cmdId);
+  if (isNaN(numeroCmdId)) {
+    return res.status(400).json({ message: 'cmdId no es un número', status: 0 });
   }
 
   try {
-    const deletedRecord = await Estado.destroy({ where: { estadoId: numeroEstadoId } });
+    const deletedRecord = await Comando.destroy({ where: { cmdId: numeroCmdId } });
 
     if (deletedRecord > 0) {
-      console.log(`estadoId: ${numeroEstadoId} se borró correctamente`);
-      res.status(200).json({ message: "Se borró correctamente" });
+      res.status(200).json({ message: 'Comando borrado correctamente', status: 1 });
     } else {
-      console.log(`estadoId: ${numeroEstadoId} no existe registro`);
-      res.status(404).json({ message: "No existe registro" });
+      res.status(404).json({ message: 'Comando no encontrado', status: 0 });
     }
   } catch (error) {
-    console.error('Error al borrar estado:', error);
-    res.status(500).json({
-      message: 'Hubo un error al intentar borrar',
-      data: { error },
-    });
+    console.error('Error al borrar comando:', error);
+    res.status(500).json({ message: 'Hubo un error', error: error.message });
   }
 }
 
 module.exports = {
   getAll,
   getOne,
-  crearEstado,
-  updateEstado,
-  deleteEstado
+  crearComando,
+  updateComando,
+  deleteComando,
 };

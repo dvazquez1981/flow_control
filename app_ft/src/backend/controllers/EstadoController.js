@@ -1,10 +1,10 @@
-// app_ft/src/backend/controllers/estadoController.js
-
 const ftdb = require('../bd/ftdb.js');
 const { Sequelize, DataTypes } = require('sequelize');
 const Estado = require('../models/Estado.js');
 const Dispositivo = require('../models/Dispositivo.js');
 const TipoEstado = require('../models/TipoEstado.js');
+const { sanitize } = require('../utils/sanitize.js');
+
 
 /** Controlador de Estado */
 async function getAll() {
@@ -121,8 +121,23 @@ async function updateEstado(req, res) {
       numeroTipoEstadoId = parseInt(tipoEstadoId);
       if (isNaN(numeroTipoEstadoId)) return res.status(400).json({ message: 'tipoEstadoId no es un número', status: 0 });
 
-      const tipoEstado = await TipoEstado.findByPk(numeroTipoEstadoId);
-      if (!tipoEstado) return res.status(404).json({ message: 'Tipo Estado no definido', status: 0 });
+      //Usamos el dispositivo actual del estado existente
+        const dispositivo = await Dispositivo.findByPk(estado.dispositivoId);
+       if (!dispositivo) {
+           return res.status(404).json({ message: 'Dispositivo actual del estado no encontrado', status: 0 });
+         }
+
+      // Validamos el tipoEstado en base al tipoContadorId del dispositivo actual
+       const tipoEstado = await TipoEstado.findOne({
+         where: { 
+      tipoEstadoId: numeroTipoEstadoId,
+      tipoContadorId: dispositivo.tipoContadorId
+         }
+      });
+
+     if (!tipoEstado) {
+        return res.status(404).json({ message: 'Tipo Estado no definido para el dispositivo actual', status: 0 });
+      }
     }
 
     //Actualizar
@@ -168,10 +183,11 @@ async function deleteEstado(req, res) {
 
     if (deletedRecord > 0) {
       console.log("id:", numeroEstadoId, "se borró correctamente");
-      res.status(200).json({ message: "Se borró correctamente" });
+      res.status(200).json({ message: "Se borró correctamente", status: 1 });
+
     } else {
       console.log("id:", numeroEstadoId, "no existe registro");
-      res.status(404).json({ message: "No existe registro" });
+      res.status(500).json({ message: 'Hubo un error', status: 0, error: error.message });
     }
   } catch (error) {
     console.error('Error al borrar:', error);
