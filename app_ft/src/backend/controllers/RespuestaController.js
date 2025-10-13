@@ -134,13 +134,11 @@ async function updateRespuesta(req, res) {
   const { RespId } = req.params;
   const { fecha, valor } = req.body;
 
-  const parsedDate = new Date(fecha);
-  if (isNaN(parsedDate.getTime())) {
-    return res.status(400).json({
-      message: 'La fecha no es válida',
-      status: 0
-    });
+   if (RespId === undefined) {
+    console.log('RespId es obligatorio');
+    return res.status(400).json({ message: 'RespId es obligatorio', status: 0 });
   }
+
 
    if (fecha !== undefined) {
        const parsedDate = new Date(fecha);
@@ -158,10 +156,7 @@ async function updateRespuesta(req, res) {
     return res.status(400).json({ message: 'valor es obligatorio', status: 0 });
   }
 
-  if (RespId === undefined) {
-    console.log('RespId es obligatorio');
-    return res.status(400).json({ message: 'RespId es obligatorio', status: 0 });
-  }
+ 
 
   const numeroRespId = parseInt(RespId);
   if (isNaN(numeroRespId)) {

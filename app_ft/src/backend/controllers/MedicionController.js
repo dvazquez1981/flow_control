@@ -1,6 +1,7 @@
 const Medicion = require('../models/Medicion.js');
 const Dispositivo = require('../models/Dispositivo.js');
 const { sanitize } = require('../utils/sanitize.js');
+const Clasificacion = require('../models/Clasificacion.js');
 
 // Obtener todas las mediciones
 async function getAll(req, res) {
@@ -84,8 +85,8 @@ async function createMedicion(req, res) {
 
     let tipoContadoIdEncontrado=deviceFound.tipoContadorId;
    // Verificar clasificacion
-    const clasificacionFound = await Dispositivo.findOne({
-      where: { dispositivoId: numDispositivoId, tipoContadorId:tipoContadoIdEncontrado }
+    const clasificacionFound = await Clasificacion.findOne({
+      where: {   clasificacionId: numClasificacionId, tipoContadorId:tipoContadoIdEncontrado }
     });
 
     if (!clasificacionFound) {
