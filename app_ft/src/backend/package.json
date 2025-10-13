@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Agustin Bassi, Brian Ducca",
+  "author": "ing. Diego Vazquez",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
@@ -19,6 +19,7 @@
     "morgan": "^1.10.0",
     "winston": "^3.9.0",
     "moment-timezone": "^0.5.43",
-    "md5": "^2.3.0"
+    "md5": "^2.3.0",
+    "mqtt": "^4.3.7"
   }
 }
