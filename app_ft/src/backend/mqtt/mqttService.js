@@ -9,14 +9,17 @@ const Clasificacion = require('../models/Clasificacion');
 
 //Conexión MQTT sin TLS
 //Docker service
-const client = mqtt.connect('mqtt://mosquitto:1883'); 
-
+//const client = mqtt.connect('mqtt://mosquitto:1883'); 
+//de prueba
+const client = mqtt.connect('mqtt://test.mosquitto.org:1883');
 client.on('connect', async () => {
     console.log('MQTT conectado al broker');
 
     //Obtener todos los dispositivos para suscribirse
     const dispositivos = await Dispositivo.findAll();
-    const topicsListen = dispositivos.map(d => `/dispositivo/${d.dispositivoId}/medicion`);
+const topicsListen = dispositivos.flatMap(d => [
+  `/dispositivo/${d.dispositivoId}/medicion`,   
+  `/dispositivo/${d.dispositivoId}/respuesta`   ]);
  
 
     //Suscribirse a mediciones
@@ -27,6 +30,7 @@ client.on('connect', async () => {
 
 
 
+    
     //Publicar un comando de ejemplo a cada dispositivo
     for (const d of dispositivos) {
         const cmd = {
@@ -42,7 +46,6 @@ client.on('connect', async () => {
         });
     }
 });
-
 //Escuchar de mensajes MQTT
 client.on('message', async (topic, payload) => {
     console.log(`MQTT mensaje recibido: ${topic}`);
@@ -131,7 +134,7 @@ client.on('message', async (topic, payload) => {
     }
 
     if (matchRespuesta) {
-        const dispositivoId = parseInt(matchComando[1]);
+        const dispositivoId = parseInt(matchRespuesta[1]);
 
 
             const { fecha, cmdId, valor } = msg;
