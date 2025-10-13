@@ -1,5 +1,7 @@
 const Respuesta = require('../models/Respuesta.js');
 const { sanitize } = require('../utils/sanitize.js');
+const Dispositivo = require('../models/Dispositivo.js')
+const Comando = require('../models/Comando.js')
 
 /** Obtener todas las respuestas */
 async function getAll(req, res) {
@@ -55,12 +57,67 @@ async function crearRespuesta(req, res) {
     return res.status(400).json({ message: 'Faltan datos obligatorios', status: 0 });
   }
 
+
+ const numDispositivoId = parseInt(dispositivoId);
+  if (isNaN(numDispositivoId)) {
+    return res.status(400).json({
+      message: 'El valor de dispositivoId no es numérico',
+      status: 0
+    });
+  }
+
+  const numCmdId = parseInt(cmdId);
+  if (isNaN(numCmdId)) {
+    return res.status(400).json({
+      message: 'El valor de cmdId no es numérico',
+      status: 0
+    });
+  }
+
+const parsedDate = new Date(fecha);
+  if (isNaN(parsedDate.getTime())) {
+    return res.status(400).json({
+      message: 'La fecha no es válida',
+      status: 0
+    });
+  }
+
+
+
   try {
+
+
+     // Verificar dispositivo
+    const deviceFound = await Dispositivo.findOne({
+      where: { dispositivoId: numDispositivoId }
+    });
+
+    if (!deviceFound) {
+      return res.status(422).json({
+        message: 'El dispositivoId no existe',
+        status: 0
+      });
+    }
+   
+
+      // Verificar cmd
+    const cmdFound = await Comando.findOne({
+      where: {   cmdId: numCmdId }
+    });
+
+    if (!cmdFound ) {
+      return res.status(422).json({
+        message: 'El cmdFound  no existe',
+        status: 0
+      });
+    }
+
+
     const nuevaRespuesta = await Respuesta.create({
       fecha,
-      cmdId,
+      numCmdId,
       valor,
-      dispositivoId
+      numDispositivoId
     });
 
     console.log('Respuesta creada con éxito');
@@ -74,7 +131,21 @@ async function crearRespuesta(req, res) {
 /** Actualizar una respuesta existente */
 async function updateRespuesta(req, res) {
   const { RespId } = req.params;
-  const { fecha, cmdId, valor, dispositivoId } = req.body;
+  const { fecha, valor } = req.body;
+
+  const parsedDate = new Date(fecha);
+  if (isNaN(parsedDate.getTime())) {
+    return res.status(400).json({
+      message: 'La fecha no es válida',
+      status: 0
+    });
+  }
+
+
+  if (valor === undefined) {
+    console.log('valor  es obligatorio');
+    return res.status(400).json({ message: 'valor es obligatorio', status: 0 });
+  }
 
   if (RespId === undefined) {
     console.log('RespId es obligatorio');
@@ -95,9 +166,9 @@ async function updateRespuesta(req, res) {
     }
 
     respuesta.fecha = fecha ?? respuesta.fecha;
-    respuesta.cmdId = cmdId ?? respuesta.cmdId;
+    respuesta.cmdId = respuesta.cmdId;
     respuesta.valor = valor ?? respuesta.valor;
-    respuesta.dispositivoId = dispositivoId ?? respuesta.dispositivoId;
+    respuesta.dispositivoId =  respuesta.dispositivoId;
 
     await respuesta.save();
 
