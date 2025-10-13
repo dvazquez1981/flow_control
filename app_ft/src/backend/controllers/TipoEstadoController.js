@@ -1,6 +1,7 @@
 // app_ft/src/backend/controllers/tipoEstadoController.js
 
 const TipoEstado = require('../models/TipoEstado.js');
+const TipoContador= require('../models/TipoContador.js')
 const { sanitize } = require('../utils/sanitize.js');
 
 /** Obtener todos los tipos de estado */
@@ -63,7 +64,21 @@ async function crearTipoEstado(req, res) {
     return res.status(400).json({ message: 'descripcion y tipoContadorId son obligatorios', status: 0 });
   }
 
+  const numeroTipoContadorId = parseInt(tipoContadorId);
+  if (isNaN(numeroTipoContadorId)) {
+    console.log('el valor de tipoContadorId no es un número');
+    return res.status(400).json({ message: 'el valor de tipoContadorId debe ser numérico', status: 0 });
+  }
+
+
   try {
+
+    const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoContadorId} });
+    if (!existenteTipoContador) {
+      console.log('El tipo de contador no existe.');
+      return res.status(409).json({ message: 'El tipo de contador ya existe.', status: 0 });
+    }
+
     const existente = await TipoEstado.findOne({ where: { descripcion } });
     if (existente) {
       console.log('El tipo de estado ya existe.');
@@ -97,6 +112,22 @@ async function updateTipoEstado(req, res) {
   }
 
   try {
+
+    let numeroTipoContadorId = undefined;
+    if (tipoContadorId !== undefined) {
+     numeroTipoContadorId = parseInt(tipoContadorId);
+     if (isNaN(numeroTipoContadorId)) {
+      return res.status(400).json({ message: 'El valor de tipoContadorId no es un número', status: 0 });
+    }
+
+    const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoContadorId  } });
+    if (!existenteTipoContador) {
+      console.log('El tipo de contador no existe.');
+      return res.status(409).json({ message: 'El tipo de contador ya existe.', status: 0 });
+    }
+    
+}
+
     const tipo = await TipoEstado.findOne({ where: { tipoEstadoId: numeroId } });
     if (!tipo) {
       console.log("Tipo de estado no encontrado");
@@ -104,7 +135,7 @@ async function updateTipoEstado(req, res) {
     }
 
     tipo.descripcion = descripcion ?? tipo.descripcion;
-    tipo.tipoContadorId = tipoContadorId ?? tipo.tipoContadorId;
+    tipo.tipoContadorId = numeroTipoContadorId ?? tipo.tipoContadorId;
     await tipo.save();
 
     console.log(`tipoEstadoId: ${numeroId} actualizado correctamente`);
