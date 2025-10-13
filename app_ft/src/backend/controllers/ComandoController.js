@@ -34,6 +34,16 @@ async function crearComando(req, res) {
     });
   }
 
+
+  
+  const parsedDate = new Date(fecha);
+  if (isNaN(parsedDate.getTime())) {
+    return res.status(400).json({
+      message: 'La fecha no es válida',
+      status: 0
+    });
+  }
+
   const numeroTipoComandId = parseInt(tipoComandId);
   const numeroDispositivoId = parseInt(dispositivoId);
 
@@ -43,6 +53,9 @@ async function crearComando(req, res) {
       status: 0,
     });
   }
+
+
+
 
   try {
     const dispositivo = await Dispositivo.findByPk(numeroDispositivoId);
@@ -97,6 +110,16 @@ async function updateComando(req, res) {
     let numeroDispositivoId = comando.dispositivoId;
     let numeroTipoComandId = comando.tipoComandId;
 
+    if (fecha !== undefined) {
+       const parsedDate = new Date(fecha);
+       if (isNaN(parsedDate.getTime())) {
+          return res.status(400).json({
+          message: 'La fecha no es válida',
+          status: 0
+         });
+       }
+
+                   }
     // Si cambia el dispositivo
     if (dispositivoId !== undefined) {
       numeroDispositivoId = parseInt(dispositivoId);

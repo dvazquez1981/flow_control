@@ -24,6 +24,8 @@ client.on('connect', async () => {
         else console.log('[MQTT] Suscrito a topics de medición:', topicsListen);
     });
 
+
+
     // Publicar un comando de ejemplo a cada dispositivo
     for (const d of dispositivos) {
         const cmd = {
@@ -40,7 +42,7 @@ client.on('connect', async () => {
     }
 });
 
-// Escucha de mensajes MQTT
+//Escuchar de mensajes MQTT
 client.on('message', async (topic, payload) => {
     console.log(`[MQTT] Mensaje recibido: ${topic}`);
     let msg;
@@ -53,7 +55,7 @@ client.on('message', async (topic, payload) => {
 
     // Identificar dispositivoId desde el topic
     const matchMedicion = topic.match(/\/dispositivo\/(\d+)\/medicion/);
-    const matchComando = topic.match(/\/dispositivo\/(\d+)\/comando/);
+    const matchRespuesta = topic.match(/\/dispositivo\/(\d+)\/respuesta/);
 
     if (matchMedicion) {
         const dispositivoId = parseInt(matchMedicion[1]);
@@ -71,7 +73,7 @@ client.on('message', async (topic, payload) => {
         }
     }
 
-    if (matchComando) {
+    if (matchRespuesta) {
         const dispositivoId = parseInt(matchComando[1]);
         try {
             const newRespuesta = await Respuesta.create({

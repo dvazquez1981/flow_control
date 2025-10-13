@@ -58,6 +58,7 @@ async function crearRespuesta(req, res) {
   }
 
 
+
  const numDispositivoId = parseInt(dispositivoId);
   if (isNaN(numDispositivoId)) {
     return res.status(400).json({
@@ -140,6 +141,16 @@ async function updateRespuesta(req, res) {
       status: 0
     });
   }
+
+   if (fecha !== undefined) {
+       const parsedDate = new Date(fecha);
+       if (isNaN(parsedDate.getTime())) {
+          return res.status(400).json({
+          message: 'La fecha no es válida',
+          status: 0
+         });
+       }
+      }
 
 
   if (valor === undefined) {

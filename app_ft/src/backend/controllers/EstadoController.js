@@ -35,6 +35,17 @@ async function crearEstado(req, res) {
     });
   }
 
+ 
+     const parsedDate = new Date(fecha);
+       if (isNaN(parsedDate.getTime())) {
+          return res.status(400).json({
+          message: 'La fecha no es válida',
+          status: 0
+         });
+       }
+
+
+
   const numeroTipoEstadoId = parseInt(tipoEstadoId);
   const numeroDispositivoId = parseInt(dispositivoId);
 
@@ -95,6 +106,19 @@ async function updateEstado(req, res) {
   try {
     const estado = await Estado.findByPk(numeroEstadoId);
     if (!estado) return res.status(404).json({ message: 'Estado no encontrado', status: 0 });
+
+
+    if (fecha !== undefined) {
+       const parsedDate = new Date(fecha);
+       if (isNaN(parsedDate.getTime())) {
+          return res.status(400).json({
+          message: 'La fecha no es válida',
+          status: 0
+         });
+       }
+      }
+
+
 
     let numeroDispositivoId = estado.dispositivoId;
     let numeroTipoEstadoId = estado.tipoEstadoId;
