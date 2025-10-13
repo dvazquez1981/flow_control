@@ -1,4 +1,4 @@
-const ftdb = require('../bd/ftdb.js');
+
 const { Sequelize } = require('sequelize');
 const Comando = require('../models/Comando.js');
 const Dispositivo = require('../models/Dispositivo.js');

@@ -6,12 +6,12 @@ const {
 const {
    
   getAll,
-  getOne,
+  //getOne,
   createMedicion,
   getAllByDeviceId,
-  deleteMedicion,
-  deleteMedicionByDeviceId,
-  updateMedicion,
+  //deleteMedicion,
+  //deleteMedicionByDeviceId,
+  //updateMedicion,
   getUltimaMedicionByDeviceID
 
 } = require('../controllers/MedicionController.js');

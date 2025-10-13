@@ -20,7 +20,7 @@ const  {
 /** Controladores */
 
 /** Obtener todos  los  usuarios */
-router.get('/usuario',chequeoToken,getAll);
+router.get('/usuario',/*chequeoToken,*/getAll);
 
 /** loguearse */
 router.post('/usuario/login',login);

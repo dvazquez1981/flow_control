@@ -18,7 +18,7 @@ const ftdb = new Sequelize('flow_control', 'root', 'userpass', {
   // Conexión 
   (async () => {
     try {
-      await awdb.authenticate();
+      await ftdb.authenticate();
       console.log('Conexión a MySQL OK.');
   
     } catch (error) {
