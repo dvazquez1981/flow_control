@@ -2,7 +2,7 @@ const Medicion = require('../models/Medicion.js');
 const Dispositivo = require('../models/Dispositivo.js');
 const { sanitize } = require('../utils/sanitize.js');
 
-// ✅ Obtener todas las mediciones
+// Obtener todas las mediciones
 async function getAll(req, res) {
   try {
     console.log('Obtengo todas las mediciones');
@@ -20,7 +20,7 @@ async function getAll(req, res) {
   }
 }
 
-// ✅ Crear una nueva medición
+// Crear una nueva medición
 async function createMedicion(req, res) {
   const { fecha, valor, carril, clasificacionId, dispositivoId } = req.body;
 
@@ -42,6 +42,24 @@ async function createMedicion(req, res) {
     });
   }
 
+
+  const numClasificacionId= parseInt(clasificacionId);
+  if (isNaN(numClasificacionId)) {
+    return res.status(400).json({
+      message: 'El valor ClasificacionId no es numérico',
+      status: 0
+    });
+  }
+
+  const numCarril= parseInt(carril);
+  if (isNaN(numCarril)) {
+    return res.status(400).json({
+      message: 'El valor carril no es numérico',
+      status: 0
+    });
+  }
+
+
   const parsedDate = new Date(fecha);
   if (isNaN(parsedDate.getTime())) {
     return res.status(400).json({
@@ -62,6 +80,21 @@ async function createMedicion(req, res) {
         status: 0
       });
     }
+   
+
+    let tipoContadoIdEncontrado=deviceFound.tipoContadorId;
+   // Verificar clasificacion
+    const clasificacionFound = await Dispositivo.findOne({
+      where: { dispositivoId: numDispositivoId, tipoContadorId:tipoContadoIdEncontrado }
+    });
+
+    if (!clasificacionFound) {
+      return res.status(422).json({
+        message: 'La clasificacion no existe',
+        status: 0
+      });
+    }
+
 
     // Evitar duplicados exactos (misma fecha, dispositivo y carril)
     const existing = await Medicion.findOne({
@@ -99,7 +132,7 @@ async function createMedicion(req, res) {
   }
 }
 
-// ✅ Obtener mediciones por dispositivo
+// Obtener mediciones por dispositivo
 async function getAllByDeviceId(req, res) {
   const { dispositivoId } = req.params;
 
@@ -136,7 +169,7 @@ async function getAllByDeviceId(req, res) {
   }
 }
 
-// ✅ Obtener la última medición
+// Obtener la última medición
 async function getUltimaMedicionByDeviceID(req, res) {
   const { dispositivoId } = req.params;
 
