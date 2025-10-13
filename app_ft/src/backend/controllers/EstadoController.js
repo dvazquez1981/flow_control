@@ -37,6 +37,7 @@ async function crearEstado(req, res) {
 
   const numeroTipoEstadoId = parseInt(tipoEstadoId);
   const numeroDispositivoId = parseInt(dispositivoId);
+
   if (isNaN(numeroTipoEstadoId) || isNaN(numeroDispositivoId)) {
     return res.status(400).json({
       message: 'tipoEstadoId y dispositivoId deben ser números.',
@@ -45,9 +46,6 @@ async function crearEstado(req, res) {
   }
 
   try {
-    
-    
-
 
    const dispositivo = await Dispositivo.findOne({ where: { dispositivoId: numeroDispositivoId } });
     if (!dispositivo) {
@@ -83,6 +81,9 @@ async function crearEstado(req, res) {
     });
   }
 
+}
+
+
 async function updateEstado(req, res) {
   const { estadoId } = req.params;
   const { fecha, tipoEstadoId, valor, dispositivoId } = req.body;
@@ -96,10 +97,29 @@ async function updateEstado(req, res) {
     return res.status(400).json({ message: 'el valor de estadoId no es un número', status: 0 });
   }
 
-  const numeroDispositivoId = dispositivoId !== undefined ? parseInt(dispositivoId) : undefined;
-  if (dispositivoId !== undefined && isNaN(numeroDispositivoId)) {
-    return res.status(400).json({ message: 'dispositivoId no es un número', status: 0 });
+  
+  if(tipoEstadoId!==undefined)
+  {
+  var numeroTipoEstadoId = parseInt(tipoEstadoId);
+  const numeroDispositivoId = parseInt(dispositivoId);
+
+  if (isNaN(numeroTipoEstadoId) ) {
+    return res.status(400).json({
+      message: 'tipoEstadoId no es un numero.',
+      status: 0,
+    });
   }
+ if(dispositivoId!==undefined)
+  {
+   const numeroDispositivoId = parseInt(dispositivoId);
+if (isNaN(numeroDispositivoId) ) {
+    return res.status(400).json({
+      message: 'DispositivoId no es un numero.',
+      status: 0,
+    });
+    }
+
+   }
 
   try {
 

@@ -100,23 +100,22 @@ async function updateDevice(req, res) {
     return res.status(400).json({ message: 'El valor de dispositivoId no es un número', status: 0 });
   }
 
-  let numeroTipoContadorId = undefined;
-  if (tipoContadorId !== undefined) {
-    numeroTipoContadorId = parseInt(tipoContadorId);
-    if (isNaN(numeroTipoContadorId)) {
-      return res.status(400).json({ message: 'El valor de tipoContadorId no es un número', status: 0 });
-    }
-  }
 
   try {
 
-
+    let numeroTipoContadorId = undefined;
+    if (tipoContadorId !== undefined) {
+     numeroTipoContadorId = parseInt(tipoContadorId);
+     if (isNaN(numeroTipoContadorId)) {
+      return res.status(400).json({ message: 'El valor de tipoContadorId no es un número', status: 0 });
+    }
     const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoContadorId  } });
     if (!existenteTipoContador) {
       console.log('El tipo de contador no existe.');
       return res.status(409).json({ message: 'El tipo de contador ya existe.', status: 0 });
     }
 
+    }
 
     const dispositivo = await Dispositivo.findOne({ where: { dispositivoId: numeroDispositivoId } });
     if (!dispositivo) {
