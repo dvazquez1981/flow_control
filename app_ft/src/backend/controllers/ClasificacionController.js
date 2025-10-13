@@ -1,6 +1,7 @@
 // app_ft/src/backend/controllers/clasificacionController.js
 
 const Clasificacion = require('../models/Clasificacion.js');
+const TipoContador = require('../models/TipoContador.js')
 const { sanitize } = require('../utils/sanitize.js');
 
 /** Obtener todas las clasificaciones */
@@ -39,6 +40,7 @@ async function getOne(req, res) {
   }
 
   try {
+
     const clasificacion = await Clasificacion.findOne({ where: { clasificacionId: numeroId } });
     if (clasificacion) {
       console.log("Clasificación encontrada");
@@ -70,6 +72,13 @@ async function crearClasificacion(req, res) {
   }
 
   try {
+
+    const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoId } });
+    if (!existenteTipoContador) {
+      console.log('El tipo de contador no existe.');
+      return res.status(404).json({ message: 'El tipo de contador ya existe.', status: 0 });
+    }
+
     const existente = await Clasificacion.findOne({ where: { descripcion } });
     if (existente) {
       console.log('La clasificación ya existe.');
@@ -102,7 +111,30 @@ async function updateClasificacion(req, res) {
     return res.status(400).json({ message: 'el valor de clasificacionId no es un número', status: 0 });
   }
 
+
+
+
+
   try {
+
+
+    if (tipoContadorId !== undefined) {
+
+       var numeroTipoId = parseInt(tipoContadorId);
+       if (isNaN(numeroTipoId)) {
+        console.log('el valor de tipoContadorId no es un número');
+        return res.status(400).json({ message: 'el valor de tipoContadorId no es un número', status: 0 });
+      }
+
+    const existenteTipoContador = await TipoContador.findOne({ where: { TC_Id:numeroTipoId } });
+    if (!existenteTipoContador) {
+      console.log('El tipo de contador no existe.');
+      return res.status(404).json({ message: 'El tipo de contador ya existe.', status: 0 });
+    }
+        
+
+     }
+     
     const clasificacion = await Clasificacion.findOne({ where: { clasificacionId: numeroId } });
     if (!clasificacion) {
       console.log("Clasificación no encontrada");
@@ -110,7 +142,7 @@ async function updateClasificacion(req, res) {
     }
 
     clasificacion.descripcion = descripcion ?? clasificacion.descripcion;
-    clasificacion.tipoContadorId = tipoContadorId ?? clasificacion.tipoContadorId;
+    clasificacion.tipoContadorId = numeroTipoId ?? clasificacion.tipoContadorId;
     await clasificacion.save();
 
     console.log(`clasificacionId: ${numeroId} actualizado correctamente`);
