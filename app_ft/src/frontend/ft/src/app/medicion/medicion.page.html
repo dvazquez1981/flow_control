@@ -1,35 +1,34 @@
-<ion-header [translucent]="true">
+<ng-container *ngIf="mediciones && mediciones.length > 0; else sinMediciones">
+  <ion-list lines="inset">
 
+
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-buttons slot="start">
-       <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>    </ion-buttons>
-        <ion-title>Detalle mediciones</ion-title>
+
+    <ion-title>Mediciones registradas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 
 
-<ion-content [fullscreen]="true" class="ion-padding">
+    <ion-item
+      *ngFor="let medicion of mediciones; trackBy: trackMedicion"
+      [class.resaltado]="+medicion.valor > 100"
+    >
+      <ion-label class="ion-text-wrap">
+        <h2>{{ medicion.fecha | date: 'yyyy-MM-dd HH:mm:ss' }}</h2>
+        <p>
+          Carril: <strong>{{ medicion.carril }}</strong> <br />
+          Clasificación ID: <strong>{{ medicion.clasificacionId }}</strong> <br />
+          Valor: <strong>{{ +medicion.valor | unidad:'Vehículos' }}</strong>
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ng-container>
 
-  @if (mediciones.length > 0) {
-    <ion-list>
-      @for (medicion of mediciones; track medicion) {
-        <ion-item [resaltar]="+medicion.valor"> 
-          {{ medicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }} 
-          - Carril: {{ +medicion.carril }}
-          - Clasificacion id: {{ +medicion.clasificacionId }}
-          - Valor: {{ +medicion.valor | unidad:'Vehiculos' }}
-
-
-          
-        </ion-item>
-        
-      }
-    </ion-list>
-  } @else {
-    <ion-text color="medium">
-      <p class="ion-text-center">No hay mediciones disponibles.</p>
-    </ion-text>
-  }
-
-</ion-content>
+<ng-template #sinMediciones>
+  <ion-text color="medium">
+    <p class="ion-text-center ion-margin-top">No hay mediciones disponibles.</p>
+  </ion-text>
+</ng-template>

@@ -3,7 +3,7 @@ import { NgIf, NgFor,CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UnidadPipe } from '../pipes/unidad.pipe';
 import { ResaltarDirective } from '../directives/resaltar.directive';
-
+import { IonicModule } from '@ionic/angular';
 
 import {
   IonContent,
@@ -17,7 +17,9 @@ import {
   IonFooter,
   IonBackButton,
   IonButtons,
-  IonText  
+  IonText  ,
+  IonListHeader
+  
 } from '@ionic/angular/standalone';
 import { MedicionService, Medicion } from '../services/medicion.service';
 
@@ -27,7 +29,7 @@ import { MedicionService, Medicion } from '../services/medicion.service';
   styleUrls: ['./medicion.page.scss'],
   standalone: true,
   imports: [
-
+    IonListHeader,
     UnidadPipe,
     ResaltarDirective,
     CommonModule,
@@ -44,7 +46,7 @@ import { MedicionService, Medicion } from '../services/medicion.service';
     IonFooter,
     IonBackButton,
     IonButtons,
-    IonText
+    IonText,
   ]
 })
 export class MedicionPage implements OnInit, OnDestroy {
@@ -106,5 +108,10 @@ export class MedicionPage implements OnInit, OnDestroy {
       clearInterval(this.intervaloMediciones);
       this.intervaloMediciones = undefined;
     }
+  }
+
+    //  Esta función es la que elimina el error
+  trackMedicion(index: number, medicion: any): any {
+    return medicion.id || index;
   }
 }
