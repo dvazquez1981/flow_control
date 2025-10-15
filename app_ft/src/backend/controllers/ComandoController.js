@@ -4,8 +4,10 @@ const Comando = require('../models/Comando.js');
 const Dispositivo = require('../models/Dispositivo.js');
 const TipoComando = require('../models/TipoComando.js'); 
 const { sanitize } = require('../utils/sanitize.js');
+
+const client= require('../mqtt/mqttService.js');
 const mqtt = require('mqtt');
-const client = mqtt.connect('mqtt://test.mosquitto.org:1883');
+////const client = mqtt.connect('mqtt://test.mosquitto.org:1883');
 /** Controlador de Comando */
 async function getAll(req, res) {
   try {

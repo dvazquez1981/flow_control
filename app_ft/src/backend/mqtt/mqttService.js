@@ -25,14 +25,14 @@ const topicsListen = dispositivos.flatMap(d => [
     //Suscribirse a mediciones
     client.subscribe(topicsListen, (err) => {
         if (err) console.error('MQTT error al suscribirse a mediciones', err);
-        else console.log('MQTT suscrito a topics de medición:', topicsListen);
+        else console.log('MQTT suscrito a topics de medición, respuesta:', topicsListen);
     });
 
 
 
     
     //Publicar un comando de ejemplo a cada dispositivo
-    for (const d of dispositivos) {
+  /*  for (const d of dispositivos) {
         const cmd = {
             fecha: new Date(),
             tipoComandId: 1,
@@ -44,7 +44,7 @@ const topicsListen = dispositivos.flatMap(d => [
             if (err) console.error('MQTT error al publicar comando', err);
             else console.log(`MQTT comando enviado a ${topic}`);
         });
-    }
+    }*/
 });
 //Escuchar de mensajes MQTT
 client.on('message', async (topic, payload) => {

@@ -53,6 +53,7 @@ export class DispositivoPage implements OnInit, OnDestroy {
   respuestasUltimoComando: Respuesta[] = [];
 
   private intervaloActualizar?: any;
+  private paramMapSub?: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -65,54 +66,111 @@ export class DispositivoPage implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
-  async ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('dispositivoId'));
-    if (!id) return;
-
-    try {
-      // Cargar dispositivo y medición inicial
-      this.dispositivo = await this.dispositivoService.getDispositivo(id);
-      this.ultimaMedicion = await this.medicionService.getUltimaMedicion(id);
-
-      // Tipos de comando
-      if (this.dispositivo?.tipoContadorId) {
-        this.tiposComando = await this.tipoComandoService.obtenerPorTipoContadorId(this.dispositivo.tipoContadorId);
+  ngOnInit() {
+    this.paramMapSub = this.route.paramMap.subscribe(async params => {
+      const id = Number(params.get('dispositivoId'));
+      if (!id) {
+        console.warn('No se recibió un dispositivoId válido');
+        return;
       }
-
-      // Cargar último comando
-      await this.cargarUltimoComando(id);
-
-      // Actualizar respuestas y medición cada 15 segundos
-      this.intervaloActualizar = setInterval(async () => {
-        if (this.dispositivo?.dispositivoId) {
-          // Actualizar última medición
-          this.ultimaMedicion = await this.medicionService.getUltimaMedicion(this.dispositivo.dispositivoId);
-
-          // Actualizar respuestas si hay un comando
-          if (this.ultimoComando?.cmdId) {
-            this.respuestasUltimoComando = await this.respuestaService.getRespuestasPorComando(this.ultimoComando.cmdId);
-          }
-
-          // Forzar refresco de la vista
-          this.cdr.detectChanges();
-        }
-      }, 15000);
-
-    } catch (error) {
-      console.error('❌ Error en DispositivoPage:', error);
-    }
+      await this.cargarDatosDelDispositivo(id);
+    });
   }
 
   ngOnDestroy() {
+    if (this.intervaloActualizar) clearInterval(this.intervaloActualizar);
+    if (this.paramMapSub) this.paramMapSub.unsubscribe();
+  }
+
+  private async cargarDatosDelDispositivo(id: number) {
     if (this.intervaloActualizar) {
       clearInterval(this.intervaloActualizar);
+      this.intervaloActualizar = undefined;
+    }
+
+    this.dispositivo = undefined;
+    this.tiposComando = [];
+    this.ultimoComando = undefined;
+    this.respuestasUltimoComando = [];
+
+    this.dispositivo = await this.dispositivoService.getDispositivo(id);
+    if (!this.dispositivo) return;
+
+    try {
+      this.ultimaMedicion = await this.medicionService.getUltimaMedicion(id);
+    } catch {
+      this.ultimaMedicion = {} as Medicion;
+    }
+
+    if (this.dispositivo.tipoContadorId != null) {
+      try {
+        const tipos = await this.tipoComandoService.obtenerPorTipoContadorId(this.dispositivo.tipoContadorId);
+        this.tiposComando = tipos?.length
+          ? tipos
+          : [{ tipoComandId: 0, tipoContadorId: this.dispositivo.tipoContadorId, descripcion: 'Sin comandos disponibles' }];
+      } catch {
+        this.tiposComando = [{ tipoComandId: 0, tipoContadorId: this.dispositivo.tipoContadorId, descripcion: 'Error al cargar comandos' }];
+      }
+    } else {
+      this.tiposComando = [{ tipoComandId: 0, tipoContadorId: 0, descripcion: 'Sin tipo de contador' }];
+    }
+
+    await this.cargarUltimoComando(id);
+
+    // Intervalo que siempre intenta obtener respuestas y última medición
+this.intervaloActualizar = setInterval(async () => {
+  if (!this.dispositivo) return; // ✅ aseguramos que exista
+
+  try {
+    // Actualizar última medición
+    this.ultimaMedicion = await this.medicionService.getUltimaMedicion(this.dispositivo.dispositivoId);
+
+    // Obtener último comando
+    const ultimo = await this.comandoService.obtenerUltimoPorDispositivoId(this.dispositivo.dispositivoId);
+    this.ultimoComando = ultimo || undefined;
+    
+    
+    if (ultimo  != null) {
+ 
+      const respuesta = await this.respuestaService.getRespuestasPorComando(ultimo.cmdId);
+      this.respuestasUltimoComando = respuesta ;
+    } else {
+      
+      this.respuestasUltimoComando = [];
+    }
+
+    this.cdr.detectChanges();
+  } catch (err) {
+    console.error('Error en intervalo de actualización:', err);
+  }
+}, 15000);
+
+
+  }
+
+  private async cargarUltimoComando(dispositivoId: number) {
+    try {
+      const ultimo = await this.comandoService.obtenerUltimoPorDispositivoId(dispositivoId);
+      this.ultimoComando = ultimo || undefined;
+
+      if (ultimo?.cmdId != null) {
+        try {
+          const respuestas = await this.respuestaService.getRespuestasPorComando(ultimo.cmdId);
+          this.respuestasUltimoComando = respuestas ?? [];
+        } catch {
+          this.respuestasUltimoComando = [];
+        }
+      } else {
+        this.respuestasUltimoComando = [];
+      }
+    } catch {
+      this.ultimoComando = undefined;
+      this.respuestasUltimoComando = [];
     }
   }
 
   verMediciones() {
-    if (this.dispositivo) {
-      this.router.navigate(['/medicion/dispositivo', this.dispositivo.dispositivoId]);
-    }
+    if (this.dispositivo) this.router.navigate(['/medicion/dispositivo', this.dispositivo.dispositivoId]);
   }
 
   async crearComando() {
@@ -121,47 +179,30 @@ export class DispositivoPage implements OnInit, OnDestroy {
     const nuevoComando: Omit<Comando, 'cmdId'> = {
       dispositivoId: this.dispositivo.dispositivoId,
       tipoComandId: this.tipoSeleccionado.tipoComandId,
-      valor: this.valorComando  ||  null, 
+      valor: this.valorComando || null,
       fecha: new Date()
     };
 
     try {
       const creado = await this.comandoService.crearComando(nuevoComando);
-
       if (creado?.cmdId != null) {
-        creado.fecha = new Date(creado.fecha);
         this.ultimoComando = creado;
-
-        // Limpiar formulario
         this.valorComando = '';
         this.tipoSeleccionado = undefined;
 
-        // Cargar respuestas del nuevo comando inmediatamente
-        this.respuestasUltimoComando = await this.respuestaService.getRespuestasPorComando(creado.cmdId);
+        try {
+          const respuestas = await this.respuestaService.getRespuestasPorComando(creado.cmdId);
+          this.respuestasUltimoComando = respuestas ?? [];
+        } catch {
+          this.respuestasUltimoComando = [];
+        }
+
         this.cdr.detectChanges();
       } else {
         console.error('El backend no devolvió cmdId al crear el comando', creado);
       }
-    } catch (error) {
-      console.error('Error al crear comando:', error);
-    }
-  }
-
-  private async cargarUltimoComando(dispositivoId: number) {
-    try {
-      const ultimo = await this.comandoService.obtenerUltimoPorDispositivoId(dispositivoId);
-      if (ultimo?.cmdId != null) {
-        ultimo.fecha = new Date(ultimo.fecha);
-        this.ultimoComando = ultimo;
-        this.respuestasUltimoComando = await this.respuestaService.getRespuestasPorComando(ultimo.cmdId);
-      } else {
-        this.ultimoComando = undefined;
-        this.respuestasUltimoComando = [];
-      }
-    } catch (error) {
-      console.error('Error al cargar último comando:', error);
-      this.ultimoComando = undefined;
-      this.respuestasUltimoComando = [];
+    } catch (err) {
+      console.error('Error al crear comando:', err);
     }
   }
 }

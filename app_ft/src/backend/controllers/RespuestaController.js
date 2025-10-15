@@ -66,15 +66,11 @@ async function getOneByComdId(req, res) {
 
   try {
     const respuesta = await Respuesta.findOne({ where: { CmdId: cmdId} });
-    if (respuesta) {
-      console.log("Respuesta encontrada para CmdId: "+cmdId)
-      res.status(200).json({ status: 1, data: sanitize(respuesta) })
-    } else {
-      console.log("Respuesta no encontrada para CmdId: "+cmdId)
-      res.status(404).json({ status: 0, message: 'Respuesta no encontrada para CmdId.' });
-    }
+    console.log('Trato de obtener Respuesta con cmdId: ' +cmdId);
+    res.status(200).json({ status: 1, data: respuesta ? sanitize(respuesta) : null });
+  
   } catch (error) {
-    console.error('Error al obtener la respuesta para CmdId :', error);
+    console.error('Error al obtener la respuesta para CmdId :'+cmdId);
     res.status(500).json({ message: 'Algo salió mal', data: { error } });
   }
 }

@@ -38,13 +38,13 @@ async function getAllByTipoContadorId(req, res) {
 
 
   try {
-    console.log('Obtengo todos los tipos de comando por TipoContadorId');
+    console.log('Obtengo todos los tipos de comando por TipoContadorId: '+ tipoContadorId);
     const tipos = await TipoComando.findAll({ where: {tipoContadorId: tipoContadorId} }) ;
     //console.log(tipos)
     if (tipos) {
       res.status(200).json(sanitize(tipos));
     } else {
-      console.log('No se encontraron tipos de comando.');
+      console.log('No se encontraron tipos de comando: '+ tipoContadorId);
       res.status(404).json({ message: 'No se encontraron tipos de comando.' });
     }
 

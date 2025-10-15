@@ -192,12 +192,10 @@ async function getUltimaMedicionByDeviceID(req, res) {
       order: [['medicionId', 'DESC']]
     });
 
-    if (!ultima) {
-      console.log('No se encontro ultima medicion para este dispositivo:'+ dispositivoId)
-      return res.status(404).json({ message: 'No se encontraron mediciones para este dispositivo.' });
-    }
-    console.log('Ultima medicion para este dispositivo:'+ dispositivoId)
-    res.status(200).json({ status: 1, data: sanitize(ultima) });
+ 
+    console.log('Trato de obtener ultima medicion para este dispositivoId: '+ dispositivoId)
+  
+    res.status(200).json({ status: 1, data: ultima ? sanitize(ultima) : null });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al obtener la medición', error: error.message });
