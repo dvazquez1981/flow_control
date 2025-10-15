@@ -124,7 +124,7 @@ async function crearComando(req, res) {
       fecha: nuevoComando.fecha
     });
 
-    client.publish(topic, payload, {}, (err) => {
+    client.publish(topic, payload, { retain: true }, (err) => {
       if (err) console.error('Error al publicar comando MQTT:', err);
       else console.log(`Comando publicado en ${topic}: ${payload}`);
     });

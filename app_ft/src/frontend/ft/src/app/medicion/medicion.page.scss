@@ -1,84 +1,76 @@
 .page-mediciones {
-  --background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  --background: linear-gradient(135deg, #f7f9fc 0%, #e9eef3 100%);
   font-family: 'Inter', 'Roboto', Arial, sans-serif;
 
+  /* 🧭 Encabezado */
   ion-header {
     --background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
     ion-toolbar {
       --background: transparent;
-      --color: white;
+      --color: #fff;
     }
 
     ion-title {
       font-weight: 600;
-      font-size: 1.2rem;
-      letter-spacing: 0.5px;
+      font-size: 1.25rem;
+      letter-spacing: 0.4px;
+      text-align: center;
     }
 
     ion-back-button {
-      --color: white;
+      --color: #fff;
     }
   }
 
+  /* 🧩 Contenido */
   ion-content {
     --background: transparent;
   }
 
   ion-list {
     background: transparent;
-    padding: 0 8px;
+    padding: 0 12px;
   }
 
   /* 🏷️ Título de la lista */
   ion-list-header {
     --background: transparent;
-    margin: 12px 0;
+    margin: 16px 0 8px;
+
     ion-label h1 {
       font-size: 1.1rem;
       font-weight: 600;
       text-transform: uppercase;
-      color: #0984e3;
+      color: #0a84e3;
       text-align: center;
       letter-spacing: 1px;
     }
   }
 
-  /* 🧩 Ítems */
+  /* 📋 Ítems */
   ion-item {
-    --background: rgba(255, 255, 255, 0.96);
+    --background: rgba(255, 255, 255, 0.95);
     --border-radius: 12px;
     margin: 0 0 12px 0;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    overflow: hidden;
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: #74b9ff;
-      opacity: 0.7;
-    }
+    padding: 6px 10px;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     ion-label {
       font-size: 0.95rem;
-      color: #333;
+      color: #2d3436;
       line-height: 1.45;
 
       h2 {
         font-weight: 600;
-        color: #2d3436;
         font-size: 1rem;
+        color: #2c3e50;
         margin-bottom: 4px;
       }
 
@@ -86,29 +78,12 @@
         font-size: 0.9rem;
         color: #555;
         margin: 0;
+
         strong {
-          color: #0984e3;
+          color: #0a84e3;
           font-weight: 600;
         }
       }
-    }
-
-    /* 🌈 Colores de resaltado */
-    &[resaltar="4"]::before,
-    &[resaltar="5"]::before {
-      background: #fdcb6e;
-    }
-
-    &[resaltar="2"]::before {
-      background: #00b894;
-    }
-
-    &[resaltar="3"]::before {
-      background: #0984e3;
-    }
-
-    &[resaltar="5"] {
-      --background: rgba(253, 203, 110, 0.1);
     }
   }
 
@@ -120,7 +95,7 @@
 
     p {
       color: #888 !important;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       margin: 0;
 
       &::before {
@@ -128,7 +103,7 @@
         font-size: 2rem;
         display: block;
         margin-bottom: 1rem;
-        opacity: 0.6;
+        opacity: 0.7;
       }
     }
   }
@@ -137,7 +112,7 @@
   @keyframes slideInUp {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(12px);
     }
     to {
       opacity: 1;
@@ -146,10 +121,7 @@
   }
 
   ion-item {
-    animation: slideInUp 0.4s ease-out both;
-    &:nth-child(n) {
-      animation-delay: calc(var(--index, 0) * 0.05s);
-    }
+    animation: slideInUp 0.35s ease-out both;
   }
 }
 
@@ -157,10 +129,12 @@
 @media (max-width: 480px) {
   .page-mediciones ion-item {
     --border-radius: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    padding: 4px 8px;
 
     ion-label {
       font-size: 0.9rem;
+
       h2 {
         font-size: 0.95rem;
       }
@@ -171,19 +145,23 @@
 /* 🌙 Modo oscuro */
 @media (prefers-color-scheme: dark) {
   .page-mediciones {
-    --background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
+    --background: linear-gradient(135deg, #1b1b1b 0%, #2d3436 100%);
 
     ion-item {
-      --background: rgba(45, 52, 54, 0.85);
-      border-color: rgba(255, 255, 255, 0.1);
+      --background: rgba(50, 54, 57, 0.9);
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 
       ion-label {
         color: #ddd;
+
         h2 {
           color: #fff;
         }
+
         p {
-          color: #bbb;
+          color: #aaa;
+
           strong {
             color: #74b9ff;
           }

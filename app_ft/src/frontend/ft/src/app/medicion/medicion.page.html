@@ -1,32 +1,31 @@
-<ng-container *ngIf="mediciones && mediciones.length > 0; else sinMediciones">
-  <ion-list lines="inset">
-
-
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Mediciones registradas</ion-title>
   </ion-toolbar>
 </ion-header>
 
+<ion-content class="page-mediciones" fullscreen>
 
-    <ion-item
-      *ngFor="let medicion of mediciones; trackBy: trackMedicion"
-      [class.resaltado]="+medicion.valor > 100"
-    >
-      <ion-label class="ion-text-wrap">
-        <h2>{{ medicion.fecha | date: 'yyyy-MM-dd HH:mm:ss' }}</h2>
-        <p>
-          Carril: <strong>{{ medicion.carril }}</strong> <br />
-          Clasificación ID: <strong>{{ medicion.clasificacionId }}</strong> <br />
-          Valor: <strong>{{ +medicion.valor | unidad:'Vehículos' }}</strong>
-        </p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
-</ng-container>
+  <ng-container *ngIf="mediciones && mediciones.length > 0; else sinMediciones">
+    <ion-list lines="inset">
+      <ion-item
+        *ngFor="let medicion of mediciones; trackBy: trackMedicion">
+        <ion-label class="ion-text-wrap">
+          <h2>{{ medicion.fecha | date: 'yyyy-MM-dd HH:mm:ss' }}</h2>
+          <p>
+            Carril: <strong>{{ medicion.carril }}</strong> <br />
+            Clasificación ID: <strong>{{ medicion.clasificacionId }}</strong> <br />
+            Valor: <strong>{{ +medicion.valor | unidad:'Vehículos' }}</strong>
+          </p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-container>
 
-<ng-template #sinMediciones>
-  <ion-text color="medium">
-    <p class="ion-text-center ion-margin-top">No hay mediciones disponibles.</p>
-  </ion-text>
-</ng-template>
+  <ng-template #sinMediciones>
+    <ion-text color="medium">
+      <p class="ion-text-center ion-margin-top">No hay mediciones disponibles.</p>
+    </ion-text>
+  </ng-template>
+
+</ion-content>

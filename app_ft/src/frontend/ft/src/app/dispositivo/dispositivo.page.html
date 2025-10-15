@@ -11,7 +11,7 @@
 
 <ion-content *ngIf="dispositivo" class="ion-padding">
 
-  <!-- 📘 Datos del dispositivo -->
+  <!--  Datos del dispositivo -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Dispositivo {{ dispositivo.dispositivoId }}</ion-card-title>
@@ -23,7 +23,7 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- ⚙️ Último comando -->
+  <!-- Último comando -->
   <ion-card *ngIf="ultimoComando; else noComando">
     <ion-card-header>
       <ion-card-title>Último Comando</ion-card-title>
@@ -34,9 +34,9 @@
       <p><strong>Valor:</strong> {{ ultimoComando.valor }}</p>
       <p><strong>Fecha:</strong> {{ ultimoComando.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
 
-      <!-- 📨 Respuestas asociadas -->
+      <!--  Respuesta asociada -->
       <div *ngIf="respuestasUltimoComando.length > 0; else sinRespuestas">
-        <h4>Respuestas asociadas:</h4>
+        <h4>Respuesta asociada:</h4>
         <ion-list>
           <ion-item *ngFor="let resp of respuestasUltimoComando">
             <ion-label>
@@ -49,7 +49,7 @@
       </div>
 
       <ng-template #sinRespuestas>
-        <p class="text-muted">No hay respuestas asociadas al último comando.</p>
+        <p class="text-muted">No hay respuesta asociada al último comando.</p>
       </ng-template>
     </ion-card-content>
   </ion-card>
