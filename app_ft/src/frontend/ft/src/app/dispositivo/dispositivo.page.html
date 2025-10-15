@@ -1,16 +1,17 @@
-<ion-header [translucent]="true">
+<!-- src/app/dispositivo/dispositivo.page.html -->
 
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-       <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>    </ion-buttons>
-        <ion-title>Detalle Dispositivo</ion-title>
+      <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle Dispositivo</ion-title>
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content *ngIf="dispositivo" class="ion-padding">
 
-  <!-- Datos del dispositivo -->
+  <!-- 📘 Datos del dispositivo -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Dispositivo {{ dispositivo.dispositivoId }}</ion-card-title>
@@ -18,60 +19,119 @@
     <ion-card-content>
       <p><strong>Nombre:</strong> {{ dispositivo.nombre }}</p>
       <p><strong>Ubicación:</strong> {{ dispositivo.ubicacion }}</p>
+      <p><strong>Tipo contador:</strong> {{ dispositivo.tipoContadorId }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ⚙️ Último comando -->
+  <ion-card *ngIf="ultimoComando; else noComando">
+    <ion-card-header>
+      <ion-card-title>Último Comando</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>ID:</strong> {{ ultimoComando.cmdId }}</p>
+      <p><strong>Tipo de comando:</strong> {{ ultimoComando.tipoComandId }}</p>
+      <p><strong>Valor:</strong> {{ ultimoComando.valor }}</p>
+      <p><strong>Fecha:</strong> {{ ultimoComando.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+
+      <!-- 📨 Respuestas asociadas -->
+      <div *ngIf="respuestasUltimoComando.length > 0; else sinRespuestas">
+        <h4>Respuestas asociadas:</h4>
+        <ion-list>
+          <ion-item *ngFor="let resp of respuestasUltimoComando">
+            <ion-label>
+              <p><strong>ID:</strong> {{ resp.RespId }}</p>
+              <p><strong>Valor:</strong> {{ resp.valor }}</p>
+              <p><strong>Fecha:</strong> {{ resp.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <ng-template #sinRespuestas>
+        <p class="text-muted">No hay respuestas asociadas al último comando.</p>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ❌ No hay comando -->
+  <ng-template #noComando>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Sin comandos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>No hay comandos registrados aún para este dispositivo.</p>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+
+  <!-- ➕ Crear nuevo comando -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Crear Comando</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Tipo de Comando</ion-label>
+        <ion-select [(ngModel)]="tipoSeleccionado" placeholder="Seleccionar tipo de comando">
+          <ion-select-option *ngFor="let tipo of tiposComando" [value]="tipo">
+            {{ tipo.descripcion }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Valor del Comando</ion-label>
+        <ion-input
+          [(ngModel)]="valorComando"
+          
+        ></ion-input>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="crearComando()"
+        [disabled]="!tipoSeleccionado || !valorComando"
+      >
+        Crear Comando
+      </ion-button>
+
+
       
     </ion-card-content>
   </ion-card>
-
-  <!-- Datos de la electroválvula -->
-  <ion-card *ngIf="electrovalvula">
-    <ion-card-header>
-      <ion-card-title>Electroválvula {{ electrovalvula.electrovalvulaId }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p><strong>Nombre:</strong> {{ electrovalvula.nombre }}</p>
-     <p>
-       <strong>Estado actual:</strong>
-       {{ logsRiego.length > 0 ? (logsRiego[0].apertura ? 'Abierta' : 'Cerrada') : 'Cerrada' }}
-     </p>
-
-     
-      <ion-button color="success" (click)="abrirValvula()">Abrir</ion-button>
-      <ion-button color="danger" (click)="cerrarValvula()">Cerrar</ion-button>
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Última medición -->
+<!-- Última medición -->
 <ion-card *ngIf="ultimaMedicion">
   <ion-card-header>
     <ion-card-title>Última Medición</ion-card-title>
   </ion-card-header>
   <ion-card-content>
-    <p><strong>Fecha:</strong> {{ ultimaMedicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
-    <p><strong>Valor:</strong> {{ ultimaMedicion.valor }}</p>
+    <p><strong>Fecha: </strong> {{ ultimaMedicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+     <p><strong>Carril: </strong> {{ ultimaMedicion.carril }}</p>
+    <p><strong>Clasificacion id: </strong> {{ ultimaMedicion.clasificacionId }}</p>
+     <p><strong>Valor: </strong> {{ ultimaMedicion.valor }}</p>
   </ion-card-content>
   <ion-card-content>
-    <ion-button expand="block" color="primary" (click)="verMediciones(dispositivo)">
-      Ver Mediciones
-    </ion-button>
+  <ion-button expand="block" color="secondary" (click)="verMediciones()">
+    Ver Mediciones
+  </ion-button>
   </ion-card-content>
 </ion-card>
+  <!-- 🔍 Ver mediciones -->
+  
 
-  <!-- Historial de logs de riego -->
-  <ion-card *ngIf="logsRiego.length">
+</ion-content>
+
+<!-- 🕓 En caso de que el dispositivo aún no haya cargado -->
+<ion-content *ngIf="!dispositivo" class="ion-padding">
+  <ion-card>
     <ion-card-header>
-      <ion-card-title>Historial de Riego</ion-card-title>
+      <ion-card-title>Cargando...</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let log of logsRiego">
-          <ion-label>
-
-            <p><strong>Apertura:</strong> {{ log?.apertura ? 'Abierta' : 'Cerrada' }}</p>
-            <p><strong>Fecha:</strong> {{ log?.fecha |  date:'yyyy-MM-dd HH:mm:ss' }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
+      <p>Esperando datos del dispositivo...</p>
     </ion-card-content>
   </ion-card>
-
 </ion-content>

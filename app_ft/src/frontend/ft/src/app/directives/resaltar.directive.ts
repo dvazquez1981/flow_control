@@ -10,7 +10,7 @@ export class ResaltarDirective implements OnChanges {
   constructor(private el: ElementRef, private renderer: Renderer2) {}
 //50 como alarma
   ngOnChanges() {
-    if (this.valor > 50) {
+    if (this.valor > 300) {
       this.renderer.setStyle(this.el.nativeElement, 'background-color', '#ff0000');
     } else {
       this.renderer.removeStyle(this.el.nativeElement, 'background-color');

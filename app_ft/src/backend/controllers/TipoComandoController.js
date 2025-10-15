@@ -20,6 +20,39 @@ async function getAll(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
+async function getAllByTipoContadorId(req, res) {
+  const { tipoContadorId } = req.params;
+  console.log("get tipoContadorId: ", tipoContadorId);
+
+  if (tipoContadorId=== undefined) {
+    console.log('tipoContadorId es obligatorio');
+    return res.status(400).json({ message: 'tipoContadorId es obligatorio', status: 0 });
+  }
+
+   const numeroTipoContadorId = parseInt(tipoContadorId);
+
+  if (isNaN(numeroTipoContadorId)) {
+    console.log('el valor de numeroTipoContadorId no es un número');
+    return res.status(400).json({ message: 'el valor de numeroTipoContadorId no es un número', status: 0 });
+  }
+
+
+  try {
+    console.log('Obtengo todos los tipos de comando por TipoContadorId');
+    const tipos = await TipoComando.findAll({ where: {tipoContadorId: tipoContadorId} }) ;
+    //console.log(tipos)
+    if (tipos) {
+      res.status(200).json(sanitize(tipos));
+    } else {
+      console.log('No se encontraron tipos de comando.');
+      res.status(404).json({ message: 'No se encontraron tipos de comando.' });
+    }
+
+  } catch (error) {
+    console.error('Error al obtener tipos de comando:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+}
 
 /** Obtener un tipo de comando por ID */
 async function getOne(req, res) {
@@ -185,5 +218,6 @@ module.exports = {
   getOne,
   crearTipoComando,
   updateTipoComando,
-  deleteTipoComando
+  deleteTipoComando,
+  getAllByTipoContadorId
 };

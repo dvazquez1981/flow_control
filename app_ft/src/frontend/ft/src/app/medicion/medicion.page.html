@@ -16,7 +16,12 @@
       @for (medicion of mediciones; track medicion) {
         <ion-item [resaltar]="+medicion.valor"> 
           {{ medicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }} 
-          - Valor: {{ +medicion.valor | unidad:'°C' }}
+          - Carril: {{ +medicion.carril }}
+          - Clasificacion id: {{ +medicion.clasificacionId }}
+          - Valor: {{ +medicion.valor | unidad:'Vehiculos' }}
+
+
+          
         </ion-item>
         
       }

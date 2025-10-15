@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { 
-  IonContent, IonHeader, IonTitle, IonToolbar, 
+import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import {
+  IonContent, IonHeader, IonTitle, IonToolbar,
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
   IonList, IonItem, IonLabel,
-  IonButton,  IonBackButton,
-  IonButtons  
+  IonButton, IonBackButton, IonButtons,
+  IonSelect, IonSelectOption, IonInput
 } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+
 import { DispositivoService, Dispositivo } from '../services/dispositivo.service';
-import { ElectrovalvulaService, Electrovalvula } from '../services/electrovalvula.service';
+import { TipoComandoService, TipoComando } from '../services/tipo-comando.service';
+import { ComandoService, Comando } from '../services/comando.service';
 import { MedicionService, Medicion } from '../services/medicion.service';
-import { LogRiegoService, LogRiego } from '../services/log-riego.service';
+import { RespuestaService, Respuesta } from '../services/respuesta.service';
 
 @Component({
   selector: 'app-dispositivo',
@@ -21,6 +23,7 @@ import { LogRiegoService, LogRiego } from '../services/log-riego.service';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     IonContent,
     IonHeader,
     IonTitle,
@@ -34,160 +37,131 @@ import { LogRiegoService, LogRiego } from '../services/log-riego.service';
     IonLabel,
     IonButton,
     IonBackButton,
-    IonButtons  
+    IonButtons,
+    IonSelect,
+    IonSelectOption,
+    IonInput
   ]
 })
-
-
-export class DispositivoPage implements OnInit {
+export class DispositivoPage implements OnInit, OnDestroy {
   dispositivo?: Dispositivo;
-  electrovalvula: Electrovalvula = {} as Electrovalvula;
-  logsRiego: LogRiego[] = [];
+  tiposComando: TipoComando[] = [];
+  ultimoComando?: Comando;
+  tipoSeleccionado?: TipoComando;
+  valorComando: string = '';
   ultimaMedicion: Medicion = {} as Medicion;
-  intervaloMediciones: any; // para setInterval
-  valvulaAbierta = false; 
+  respuestasUltimoComando: Respuesta[] = [];
+
+  private intervaloActualizar?: any;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private dispositivoService: DispositivoService,
-    private electrovalvulaService: ElectrovalvulaService,
+    private tipoComandoService: TipoComandoService,
+    private comandoService: ComandoService,
     private medicionService: MedicionService,
-    private logRiegoService: LogRiegoService,
-    private router: Router
-    
-
+    private respuestaService: RespuestaService,
+    private cdr: ChangeDetectorRef
   ) {}
-
 
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('dispositivoId'));
     if (!id) return;
+
     try {
-        this.dispositivo = await this.dispositivoService.getDispositivo(id);
-        console.log('Dispositivo:', this.dispositivo);
- 
-        if (this.dispositivo?.electrovalvulaId) {
-            const electroId = Number(this.dispositivo.electrovalvulaId);
-          
-         this.electrovalvula = await this.electrovalvulaService.getElectrovalvula(electroId);
-         console.log('Electrovalvula:', this.electrovalvula);
+      // Cargar dispositivo y medición inicial
+      this.dispositivo = await this.dispositivoService.getDispositivo(id);
+      this.ultimaMedicion = await this.medicionService.getUltimaMedicion(id);
 
-        //Obtener última medición
-        this.ultimaMedicion = await this.medicionService.getUltimaMedicion(id);
-        console.log('Última medición:', this.ultimaMedicion);
-        //obtengo el log_riego
-        this.logsRiego = await this.logRiegoService.getLogs(electroId);
-        if(this.logsRiego.length>0)
-        {
-           this.valvulaAbierta=this.logsRiego[0].apertura==0?false:true;
-        if(this.valvulaAbierta)
-               this.iniciarMedicionesContinuas()       
-        }
-        console.log('Logs de riego:', this.logsRiego);
-        }
-      } catch (error) {
-        console.error('Error al obtener el dispositivo:', error);
+      // Tipos de comando
+      if (this.dispositivo?.tipoContadorId) {
+        this.tiposComando = await this.tipoComandoService.obtenerPorTipoContadorId(this.dispositivo.tipoContadorId);
       }
+
+      // Cargar último comando
+      await this.cargarUltimoComando(id);
+
+      // Actualizar respuestas y medición cada 15 segundos
+      this.intervaloActualizar = setInterval(async () => {
+        if (this.dispositivo?.dispositivoId) {
+          // Actualizar última medición
+          this.ultimaMedicion = await this.medicionService.getUltimaMedicion(this.dispositivo.dispositivoId);
+
+          // Actualizar respuestas si hay un comando
+          if (this.ultimoComando?.cmdId) {
+            this.respuestasUltimoComando = await this.respuestaService.getRespuestasPorComando(this.ultimoComando.cmdId);
+          }
+
+          // Forzar refresco de la vista
+          this.cdr.detectChanges();
+        }
+      }, 15000);
+
+    } catch (error) {
+      console.error('❌ Error en DispositivoPage:', error);
     }
-   
- async abrirValvula() {
-  if (!this.electrovalvula) return;
-
-  /*const ultimoLog = this.logsRiego[0];
-  if (!ultimoLog?.logRiegoId) {
-    console.warn('No hay log de riego disponible para abrir válvula');
-    return;
-  }
-    */
-
-  if (!this.dispositivo || !this.dispositivo.dispositivoId) {
-  console.error('No hay dispositivo seleccionado');
-  return;
   }
 
-
- 
-
-  try {
-      const actualizado = await this.logRiegoService.addLog(
-      this.electrovalvula.electrovalvulaId,
-      1
-    );
-    console.log('Válvula abierta:', actualizado);
-     this.logsRiego.unshift(actualizado);
-     this.valvulaAbierta = true;
-    this.iniciarMedicionesContinuas();
- 
-  } catch (err) {
-    console.error('Error al abrir válvula:', err);
+  ngOnDestroy() {
+    if (this.intervaloActualizar) {
+      clearInterval(this.intervaloActualizar);
+    }
   }
-}
 
-async cerrarValvula() {
-  if (!this.electrovalvula) return;
-
-
-  try {
-    const actualizado = await this.logRiegoService.addLog(
-      this.electrovalvula.electrovalvulaId,
-      0
-    );
-    console.log('Válvula cerrada:', actualizado);
-    this.logsRiego.unshift(actualizado);
-  
-    
-    this.detenerMedicionesContinuas() ;
-    this.valvulaAbierta = false;
-
-
-  } catch (err) {
-    console.error('Error al cerrar válvula:', err);
+  verMediciones() {
+    if (this.dispositivo) {
+      this.router.navigate(['/medicion/dispositivo', this.dispositivo.dispositivoId]);
+    }
   }
-}
 
-iniciarMedicionesContinuas() {
-  if (this.intervaloMediciones) return;
+  async crearComando() {
+    if (!this.dispositivo || !this.tipoSeleccionado || !this.valorComando) return;
 
-  this.intervaloMediciones = setInterval(async () => {
-    const valor = parseFloat((Math.random() * 100).toFixed(2)).toString(); // ahora es número
-    const fecha = new Date();
-
-    const nuevaMedicion: Medicion = {
-      valor,
-      dispositivoId: this.dispositivo!.dispositivoId,
-      fecha
+    const nuevoComando: Omit<Comando, 'cmdId'> = {
+      dispositivoId: this.dispositivo.dispositivoId,
+      tipoComandId: this.tipoSeleccionado.tipoComandId,
+      valor: this.valorComando  ||  null, 
+      fecha: new Date()
     };
 
     try {
+      const creado = await this.comandoService.crearComando(nuevoComando);
 
-      await this.medicionService.guardarMedicion(nuevaMedicion);
-      this.ultimaMedicion=nuevaMedicion
-      console.log('Medición guardada:', nuevaMedicion);
+      if (creado?.cmdId != null) {
+        creado.fecha = new Date(creado.fecha);
+        this.ultimoComando = creado;
+
+        // Limpiar formulario
+        this.valorComando = '';
+        this.tipoSeleccionado = undefined;
+
+        // Cargar respuestas del nuevo comando inmediatamente
+        this.respuestasUltimoComando = await this.respuestaService.getRespuestasPorComando(creado.cmdId);
+        this.cdr.detectChanges();
+      } else {
+        console.error('El backend no devolvió cmdId al crear el comando', creado);
+      }
     } catch (error) {
-      console.error('Error guardando medición:', error);
+      console.error('Error al crear comando:', error);
     }
-  }, 10000); // cada 10 segundos (puedes ajustar el intervalo)
-}
+  }
 
-
-verMediciones(dispositivo: Dispositivo | any) {
-  
-this.router.navigate(['/medicion/dispositivo', dispositivo.dispositivoId], {
-  queryParams: { valvulaAbierta: this.valvulaAbierta }
-});
-
-  console.log("valvula abierto" +this.valvulaAbierta)
-
-
-}
-
-
-detenerMedicionesContinuas() {
-  if (this.intervaloMediciones) {
-    clearInterval(this.intervaloMediciones);
-    this.intervaloMediciones = null;
-    console.log('Mediciones continuas detenidas');
+  private async cargarUltimoComando(dispositivoId: number) {
+    try {
+      const ultimo = await this.comandoService.obtenerUltimoPorDispositivoId(dispositivoId);
+      if (ultimo?.cmdId != null) {
+        ultimo.fecha = new Date(ultimo.fecha);
+        this.ultimoComando = ultimo;
+        this.respuestasUltimoComando = await this.respuestaService.getRespuestasPorComando(ultimo.cmdId);
+      } else {
+        this.ultimoComando = undefined;
+        this.respuestasUltimoComando = [];
+      }
+    } catch (error) {
+      console.error('Error al cargar último comando:', error);
+      this.ultimoComando = undefined;
+      this.respuestasUltimoComando = [];
+    }
   }
 }
-
-  }

@@ -25,11 +25,17 @@ app.use(cors(corsOptions))
 const rutasDevice = require( './rutas/routesDevice.js')
 const rutasMedicion = require( './rutas/routesMedicion.js')
 const rutasUsuario= require('./rutas/routesUsuario.js')
-
+const rutasComando= require('./rutas/routesComando.js')
+const rutasRespuesta=require('./rutas/routesRespuesta.js')
+const rutasTipoComando=require('./rutas/routesTipoComando.js')
 //ruta
+app.use(rutasRespuesta);
 app.use(rutasDevice);
 app.use(rutasMedicion);
 app.use(rutasUsuario);
+app.use(rutasTipoComando);
+app.use(rutasComando);
+
 
 // Ruta simple para comprobar el estado del servidor
 app.get('/', function(req, res) {

@@ -1,173 +1,346 @@
-/* */
 .page-dispositivo {
-    padding: 1rem;
-    background: #eef2f3;
-    font-family: 'Roboto', Arial, sans-serif;
-    font-weight: 400;
-    color: #000;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
+  font-weight: 400;
+  color: #1a1a1a;
+  min-height: 100vh;
+
+  ion-header {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: #ffffff;
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0, 184, 148, 0.3);
+    
+    ion-toolbar {
+      --background: transparent;
+      --border-width: 0;
+    }
+
+    ion-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      text-align: center;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      padding: 0 1rem;
+    }
+
+    ion-back-button {
+      --color: #ffffff;
+      --icon-margin-start: 8px;
+    }
+  }
+
+  ion-content {
+    --background: transparent;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 1rem;
+    --padding-bottom: 2rem;
+  }
 }
 
-.page-dispositivo ion-header {
-    background: #00b894;
-    color: #000;
-    padding: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.page-dispositivo ion-header ion-toolbar {
-    --background: #00b894;
-}
-
-.page-dispositivo ion-title {
-    font-family: 'Roboto', Arial, sans-serif;
-    font-weight: 600;
-    font-size: 1.5rem;
-    text-align: center;
-    letter-spacing: 0.5px;
-    color: #000;
-}
-
-.page-dispositivo ion-content {
-    --background: #eef2f3;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    color: #000;
-}
-
-/* ESTILOS FORZADOS PARA TEXTO NEGRO EN CARDS */
+/* Tarjetas mejoradas */
 .page-dispositivo ion-card {
-    font-family: 'Roboto', Arial, sans-serif;
-    background: #fff;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    padding: 1.2rem;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    --color: #000 !important;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  padding: 1.5rem;
+  margin: 0 0 1.5rem 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #00b894, #00cec9);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 8px 30px rgba(0, 0, 0, 0.12),
+      0 2px 8px rgba(0, 0, 0, 0.06);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
 }
 
-.page-dispositivo ion-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-}
-
+/* Encabezados de tarjetas */
 .page-dispositivo ion-card-header {
-    padding-bottom: 12px;
-    border-bottom: 1px solid #e0e0e0;
+  padding: 0 0 1rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 1rem;
 }
 
-/* Especificidad máxima para texto negro */
-.page-dispositivo ion-card * {
-    color: #000000 !important;
-    --color: #000000 !important;
+.page-dispositivo ion-card-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #1a1a1a !important;
+  letter-spacing: -0.02em;
+  margin: 0;
 }
 
-.page-dispositivo ion-card ion-card-title,
-.page-dispositivo ion-card .ion-card-title,
-.page-dispositivo ion-card [class*="card-title"] {
-    font-weight: 600;
-    font-size: 1.3rem;
-    color: #000000 !important;
-    --color: #000000 !important;
-}
+/* Contenido de tarjetas */
+.page-dispositivo ion-card-content {
+  padding: 0;
+  color: #333 !important;
 
-.page-dispositivo ion-card ion-card-content,
-.page-dispositivo ion-card p,
-.page-dispositivo ion-card strong {
-    color: #000000 !important;
-    --color: #000000 !important;
-}
-
-.page-dispositivo .status {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin: 10px 0;
-}
-
-.page-dispositivo .status .dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #00b894;
-}
-
-.page-dispositivo .status .dot.off {
-    background: #d63031;
-}
-
-.page-dispositivo .status span {
-    font-weight: 500;
-    font-size: 1rem;
-}
-
-.page-dispositivo .acciones {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 15px;
-}
-
-.page-dispositivo .acciones ion-button {
-    border-radius: 14px;
-    font-weight: 600;
-    font-size: 1rem;
-    letter-spacing: 0.3px;
-    transition: transform 0.2s ease;
-    --color: #000;
-}
-
-.page-dispositivo .acciones ion-button:hover {
-    transform: scale(1.05);
-}
-
-.page-dispositivo .acciones ion-button.encender {
-    --background: #00b894;
-    --background-hover: #00cec9;
-}
-
-.page-dispositivo .acciones ion-button.apagar {
-    --background: #d63031;
-    --background-hover: #e17055;
-}
-
-.page-dispositivo .ultima-medicion {
-    background: #f3fbfa;
-    border: 1px solid #c7f5ea;
-    border-radius: 14px;
-    padding: 1rem;
-}
-
-.page-dispositivo .ultima-medicion h3 {
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-}
-
-.page-dispositivo .ultima-medicion p {
-    font-weight: 400;
+  p {
+    margin: 0.75rem 0;
     font-size: 0.95rem;
-    margin: 0.25rem 0;
+    line-height: 1.5;
+    color: #444 !important;
+
+    strong {
+      font-weight: 600;
+      color: #1a1a1a !important;
+      min-width: 120px;
+      display: inline-block;
+    }
+  }
 }
 
-/* Regla general para asegurar que todos los textos sean negros */
-.page-dispositivo ion-label, 
-.page-dispositivo ion-card-title, 
-.page-dispositivo ion-card-content, 
-.page-dispositivo ion-item, 
-.page-dispositivo span, 
-.page-dispositivo p {
-    color: #000000 !important;
-    --color: #000000 !important;
+/* Lista de respuestas */
+.page-dispositivo ion-list {
+  background: transparent;
+  padding: 0;
+  margin-top: 1rem;
+
+  ion-item {
+    --background: rgba(0, 184, 148, 0.05);
+    --border-radius: 12px;
+    --padding-start: 1rem;
+    --padding-end: 1rem;
+    --inner-padding-end: 0;
+    margin: 0.5rem 0;
+    border: 1px solid rgba(0, 184, 148, 0.1);
+    
+    ion-label {
+      margin: 0.75rem 0;
+      
+      p {
+        margin: 0.4rem 0;
+        font-size: 0.9rem;
+        color: #555 !important;
+        
+        strong {
+          color: #333 !important;
+        }
+      }
+    }
+  }
 }
 
-/* Selectores de alta especificidad para Ionic */
-.page-dispositivo .md ion-card .item,
-.page-dispositivo .ios ion-card .item {
-    --color: #000000 !important;
+/* Formularios */
+.page-dispositivo ion-item {
+  --background: rgba(255, 255, 255, 0.8);
+  --border-radius: 12px;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  margin: 1rem 0;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  
+  ion-label {
+    color: #666 !important;
+    font-weight: 500;
+  }
+  
+  ion-select,
+  ion-input {
+    --padding-start: 0;
+    color: #1a1a1a !important;
+  }
 }
 
-.page-dispositivo .md ion-card p,
-.page-dispositivo .ios ion-card p {
-    color: #000000 !important;
+/* Botones mejorados */
+.page-dispositivo ion-button {
+  --border-radius: 12px;
+  --padding-top: 1rem;
+  --padding-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  transition: all 0.2s ease;
+  margin: 0.5rem 0;
+
+  &[expand="block"] {
+    --box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+    
+    &:hover {
+      --box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+      transform: translateY(-2px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &[color="primary"] {
+    --background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    --background-hover: linear-gradient(135deg, #00cec9 0%, #00b894 100%);
+  }
+
+  &[color="secondary"] {
+    --background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    --background-hover: linear-gradient(135deg, #81ecec 0%, #00cec9 100%);
+  }
+}
+
+/* Estados y utilidades */
+.page-dispositivo .text-muted {
+  color: #888 !important;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Tarjeta de última medición con estilo especial */
+.page-dispositivo ion-card:has(.ultima-medicion) {
+  background: linear-gradient(135deg, rgba(116, 185, 255, 0.1) 0%, rgba(9, 132, 227, 0.05) 100%);
+  border: 1px solid rgba(116, 185, 255, 0.3);
+  
+  &::before {
+    background: linear-gradient(90deg, #74b9ff, #0984e3);
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-dispositivo ion-card {
+  animation: fadeInUp 0.5s ease-out both;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .page-dispositivo {
+    padding: 1rem;
+    
+    ion-card {
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    
+    ion-card-title {
+      font-size: 1.2rem;
+    }
+    
+    ion-card-content p {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .page-dispositivo {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
+    color: #ffffff;
+
+    ion-card {
+      background: rgba(45, 52, 54, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      
+      ion-card-title {
+        color: #ffffff !important;
+      }
+      
+      ion-card-content {
+        color: #dddddd !important;
+        
+        p {
+          color: #cccccc !important;
+          
+          strong {
+            color: #ffffff !important;
+          }
+        }
+      }
+    }
+
+    ion-item {
+      --background: rgba(45, 52, 54, 0.6);
+      
+      ion-label {
+        color: #bbbbbb !important;
+      }
+    }
+
+    .text-muted {
+      color: #888 !important;
+    }
+  }
+}
+
+/* Estados de carga */
+.page-dispositivo .loading-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  
+  ion-spinner {
+    --color: #00b894;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: #666 !important;
+    font-size: 1rem;
+  }
+}
+
+/* Mejoras específicas para el listado de respuestas */
+.page-dispositivo h4 {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333 !important;
+  margin: 1.5rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(0, 184, 148, 0.2);
+}
+
+/* Estilo para cuando no hay datos */
+.page-dispositivo .no-data {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #888 !important;
+  
+  &::before {
+    content: '📋';
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
 }

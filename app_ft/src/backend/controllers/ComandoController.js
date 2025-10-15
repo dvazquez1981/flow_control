@@ -5,30 +5,63 @@ const Dispositivo = require('../models/Dispositivo.js');
 const TipoComando = require('../models/TipoComando.js'); 
 const { sanitize } = require('../utils/sanitize.js');
 const mqtt = require('mqtt');
-
+const client = mqtt.connect('mqtt://test.mosquitto.org:1883');
 /** Controlador de Comando */
-async function getAll() {
+async function getAll(req, res) {
   try {
-    return await Comando.findAll();
+
+    let  c = await Comando.findAll();
+  if (c && c.length > 0) {
+      res.status(200).json(sanitize(c));
+    } else {
+      console.log('No se encontraron comandos.');
+      res.status(404).json({ message: 'No se encontraron comandos.' });
+    }
+
   } catch (error) {
-    console.error('Error al obtener los comandos:', error);
-    throw error;
+    console.error('Error al obtener comandos:', error.message);
+    res.status(500).json({ error: error.message });
   }
 }
 
-async function getOne(id) {
-  try {
-    return await Comando.findByPk(id);
-  } catch (error) {
-    console.error('Error al obtener el comando:', error);
-    throw error;
+async function getOne(req, res) {
+  const { cmdId } = req.params;
+
+  if (cmdId=== undefined) {
+    console.log('cmdId es obligatorio');
+    return res.status(400).json({ message: 'cmdId es obligatorio', status: 0 });
   }
+
+  const numerocmdId = parseInt(cmdId);
+  if (isNaN(numerocmdId)) {
+    console.log('el valor de cmdId no es un número');
+    return res.status(400).json({ message: 'el valor de cmdId  no es un número', status: 0 });
+  }
+
+  try {
+    const c = await  Comando.findOne({ where: { cmdId: numerocmdId } });
+    if (c) {
+      res.status(200).json(sanitize(c));
+    } else {
+      console.log("Comando no encontrado");
+      res.status(404).json({ message: 'Comando no encontrado.' });
+    }
+  } catch (error) {
+    console.error('Error al obtener el Comando no encontrado:', error);
+    res.status(500).json({ message: 'Algo salió mal', data: { error } });
+  }
+
+
+
 }
 
 async function crearComando(req, res) {
   const { fecha, tipoComandId, valor, dispositivoId } = req.body;
 
-  if (!fecha || tipoComandId === undefined || valor === undefined || dispositivoId === undefined) {
+  console.log('fecha:', fecha, 'tipoComandId:', tipoComandId, 'valor:', valor, ' dispositivoId:', dispositivoId);
+
+
+  if (!fecha || tipoComandId === undefined  || dispositivoId === undefined) {
     return res.status(400).json({
       message: 'fecha, tipoComandId, valor y dispositivoId son obligatorios.',
       status: 0,
@@ -211,10 +244,48 @@ async function deleteComando(req, res) {
   }
 }
 
+
+
+// Obtener la última medición
+async function getUltimoComandoByDeviceID(req, res) {
+  const { dispositivoId } = req.params;
+
+  if (!dispositivoId) {
+    return res.status(400).json({ message: 'dispositivoId es obligatorio', status: 0 });
+  }
+
+  const numDispositivoId = parseInt(dispositivoId);
+  if (isNaN(numDispositivoId)) {
+    return res.status(400).json({
+      message: 'El valor de dispositivoId no es numérico',
+      status: 0
+    });
+  }
+
+  try {
+    const ultimo= await Comando.findOne({
+      where: { dispositivoId: numDispositivoId },
+      order: [['cmdId', 'DESC']]
+    });
+    
+    if (!ultimo) {
+      console.error('no se encontro:', error);
+  
+      return res.status(404).json({ message: 'No se encontraron Comandos para este dispositivo.' });
+    }
+   
+    res.status(200).json({ status: 1, data: sanitize(ultimo) });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener los coamndos', error: error.message });
+  }
+}
+
 module.exports = {
   getAll,
   getOne,
   crearComando,
   updateComando,
   deleteComando,
+  getUltimoComandoByDeviceID
 };

@@ -1,99 +1,226 @@
-/* medicion.page.scss */
+.page-mediciones {
+  --background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
 
-:host {
-  display: block;
-  min-height: 100%;
-  background: #f4f7fb;
-  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-  color: #000; /* Texto negro por defecto */
-}
+  ion-header {
+    --background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    
+    ion-toolbar {
+      --background: transparent;
+      --color: white;
+    }
 
-/* Header */
-ion-header ion-toolbar {
-  --background: linear-gradient(135deg, #157f6b, #1fbf9b);
-  color: #000; /* título negro */
-  box-shadow: 0 2px 8px rgba(23, 42, 58, 0.06);
-}
+    ion-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
 
-/* Content spacing */
-ion-content {
-  --padding-start: 12px;
-  --padding-end: 12px;
-  --padding-top: 12px;
-  --padding-bottom: 12px;
-  color: #000;
-}
+    ion-back-button {
+      --color: white;
+    }
+  }
 
-/* List container */
-ion-list {
-  padding: 6px 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  ion-content {
+    --background: transparent;
+  }
+
+  /* Lista principal */
+  ion-list {
+    background: transparent;
+    padding: 0;
+  }
+
+  /* Items de mediciones */
+  ion-item {
+    --background: rgba(255, 255, 255, 0.95);
+    --border-radius: 12px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 70px;
+    margin: 0 0 12px 0;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.06),
+      0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    /* Indicador lateral basado en el valor */
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #74b9ff;
+      opacity: 0.6;
+    }
+
+    /* Efectos hover */
+    &:hover {
+      --background: rgba(255, 255, 255, 0.98);
+      transform: translateY(-2px);
+      box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Sistema de resaltado por valor */
+    &[resaltar="0"]::before { background: #bdc3c7; }
+    &[resaltar="1"]::before { background: #74b9ff; }
+    &[resaltar="2"]::before { background: #00b894; }
+    &[resaltar="3"]::before { background: #fdcb6e; }
+    &[resaltar="4"]::before { background: #e17055; }
+    &[resaltar="5"]::before { background: #6c5ce7; }
+
+    /* Resaltado intenso para valores altos */
+    &[resaltar="4"],
+    &[resaltar="5"] {
+      --background: rgba(253, 203, 110, 0.05);
+      border-color: rgba(253, 203, 110, 0.2);
+    }
+
+    ion-label {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #333;
+      white-space: normal;
+      margin: 12px 0;
+
+      /* Mejorar la legibilidad del texto */
+      .medicion-text {
+        display: block;
+        
+        .fecha {
+          font-weight: 600;
+          color: #1a1a1a;
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        .detalles {
+          color: #666;
+          font-size: 0.9rem;
+          
+          .valor {
+            font-weight: 600;
+            color: #0984e3;
+          }
+        }
+      }
+    }
+  }
+
+  /* Estado cuando no hay mediciones */
+  ion-text {
+    display: block;
+    text-align: center;
+    padding: 3rem 1rem;
+
+    p {
+      color: #888 !important;
+      font-size: 1.1rem;
+      margin: 0;
+      
+      &::before {
+        content: '📊';
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  /* Animaciones de entrada */
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   ion-item {
-    --background: #ffffff;
-    --inner-padding-start: 14px;
-    --inner-padding-end: 14px;
-    border-radius: 12px;
-    box-shadow: 0 6px 14px rgba(31, 47, 63, 0.06);
-    align-items: center;
-    height: auto;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    transition: transform .15s ease, box-shadow .15s ease;
-    color: #000 !important; /* texto negro sólido */
-
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 24px rgba(31, 47, 63, 0.09);
-    }
-
-    /* Layout interno: fecha a la izquierda, valor a la derecha */
-    .medicion-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      gap: 12px;
-    }
-
-    /* Fecha: monoespaciada */
-    .medicion-fecha {
-      font-family: 'Roboto Mono', monospace;
-      font-size: 0.87rem;
-      color: #000; /* negro sólido */
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      max-width: 65%;
-    }
-
-    /* Valor destacado */
-    .medicion-valor {
-      font-weight: 700;
-      font-size: 0.98rem;
-      color: #000; /* negro sólido */
-      background: rgba(11,107,90,0.08); /* mantengo verde tenue */
-      padding: 6px 10px;
-      border-radius: 999px;
-      min-width: 78px;
-      text-align: center;
-    }
-
-    /* Placeholder / loading */
-    &.loading {
-      --background: linear-gradient(90deg, #f6fbfa, #f8fbff);
-      color: #000; /* negro sólido */
-      justify-content: center;
-      height: 56px;
-      font-style: italic;
+    animation: slideInUp 0.4s ease-out both;
+    
+    /* Escalonar animaciones */
+    @for $i from 1 through 20 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
     }
   }
 }
 
-/* Responsive: en pantallas muy chicas ajustar tamaños */
-@media (max-width: 360px) {
-  .medicion-fecha { max-width: 60%; font-size: 0.82rem; }
-  .medicion-valor { font-size: 0.9rem; padding: 5px 8px; min-width: 64px; }
+/* Responsive */
+@media (max-width: 480px) {
+  .page-mediciones {
+    ion-item {
+      --min-height: 65px;
+      --padding-start: 12px;
+      --padding-end: 12px;
+      margin: 0 0 8px 0;
+
+      ion-label {
+        font-size: 0.9rem;
+        margin: 10px 0;
+      }
+    }
+  }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .page-mediciones {
+    --background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
+
+    ion-item {
+      --background: rgba(45, 52, 54, 0.8);
+      border-color: rgba(255, 255, 255, 0.1);
+
+      ion-label {
+        color: #dddddd;
+
+        .medicion-text {
+          .fecha {
+            color: #ffffff;
+          }
+
+          .detalles {
+            color: #bbbbbb;
+            
+            .valor {
+              color: #74b9ff;
+            }
+          }
+        }
+      }
+    }
+
+    ion-text p {
+      color: #888 !important;
+    }
+  }
+}
+
+/* Mejora para el texto dentro de los items - sin modificar HTML */
+.page-mediciones ion-item {
+  /* Esto mejorará la apariencia del texto sin cambiar la estructura */
+  line-height: 1.5;
+  
+  /* Si quieres separar visualmente las partes del texto */
+  .native-wrapper {
+    padding: 8px 0;
+  }
+}
+
+/* Asegurar que el contenido tenga buen espaciado */
+.ion-padding {
+  padding: 16px;
 }

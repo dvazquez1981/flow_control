@@ -8,8 +8,11 @@ import { map,catchError } from 'rxjs/operators';
 export interface Medicion {
   medicionId?: number;
   valor:string;
-  dispositivoId: number;
   fecha: Date;
+  carril: number;
+  clasificacionId: number;
+  dispositivoId: number;
+    
 }
 
 @Injectable({

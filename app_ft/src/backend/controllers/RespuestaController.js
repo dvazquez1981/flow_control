@@ -48,6 +48,37 @@ async function getOne(req, res) {
   }
 }
 
+
+/** Obtener una respuesta por Cmd ID */
+async function getOneByComdId(req, res) {
+  const { cmdId } = req.params;
+
+  if (cmdId === undefined) {
+    console.log('cmdId es obligatorio');
+    return res.status(400).json({ message: 'cmdId es obligatorio', status: 0 });
+  }
+
+  const numeroCmdId= parseInt(cmdId);
+  if (isNaN(numeroCmdId)) {
+    console.log('el valor de CmdId no es un número');
+    return res.status(400).json({ message: 'el valor de CmdId no es un número', status: 0 });
+  }
+
+  try {
+    const respuesta = await Respuesta.findOne({ where: { CmdId: cmdId} });
+    if (respuesta) {
+      console.log("Respuesta encontrada para CmdId: "+cmdId)
+      res.status(200).json({ status: 1, data: sanitize(respuesta) })
+    } else {
+      console.log("Respuesta no encontrada para CmdId: "+cmdId)
+      res.status(404).json({ status: 0, message: 'Respuesta no encontrada para CmdId.' });
+    }
+  } catch (error) {
+    console.error('Error al obtener la respuesta para CmdId :', error);
+    res.status(500).json({ message: 'Algo salió mal', data: { error } });
+  }
+}
+
 /** Crear una nueva respuesta */
 async function crearRespuesta(req, res) {
   const { fecha, cmdId, valor, dispositivoId } = req.body;
@@ -222,5 +253,6 @@ module.exports = {
   getOne,
   crearRespuesta,
   updateRespuesta,
-  deleteRespuesta
+  deleteRespuesta,
+  getOneByComdId
 };

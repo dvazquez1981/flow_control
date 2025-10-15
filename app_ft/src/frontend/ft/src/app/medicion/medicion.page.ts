@@ -51,7 +51,7 @@ export class MedicionPage implements OnInit, OnDestroy {
 
   mediciones: Medicion[] = [];
   intervaloMediciones?: any;
-  valvulaAbierta?: boolean;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -60,7 +60,12 @@ export class MedicionPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+
+    this.cargarMediciones();
+    this.iniciarActualizacionMediciones(5000);
+
+
+    /*this.route.queryParams.subscribe(params => {
       this.valvulaAbierta = params['valvulaAbierta'] === 'true' || params['valvulaAbierta'] === '1';
       console.log('Válvula abierta?', this.valvulaAbierta);
     });
@@ -69,7 +74,7 @@ export class MedicionPage implements OnInit, OnDestroy {
 
     if (this.valvulaAbierta) {
       this.iniciarActualizacionMediciones(5000);
-    }
+    }*/
   }
 
   ngOnDestroy() {
