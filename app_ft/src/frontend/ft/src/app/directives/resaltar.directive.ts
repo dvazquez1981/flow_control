@@ -8,7 +8,7 @@ export class ResaltarDirective implements OnChanges {
   @Input('resaltar') valor!: number;
 
   constructor(private el: ElementRef, private renderer: Renderer2) {}
-//50 como alarma
+//300 como alarma
   ngOnChanges() {
     if (this.valor > 300) {
       this.renderer.setStyle(this.el.nativeElement, 'background-color', '#ff0000');
