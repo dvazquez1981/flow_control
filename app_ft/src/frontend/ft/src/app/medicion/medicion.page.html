@@ -1,6 +1,9 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Mediciones registradas</ion-title>
+     <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/dispositivo/' + dispositivoId"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mediciones registradas - Dispositivo {{ dispositivoId }}</ion-title>
   </ion-toolbar>
 </ion-header>
 

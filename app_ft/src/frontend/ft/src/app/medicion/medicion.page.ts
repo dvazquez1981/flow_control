@@ -53,18 +53,29 @@ export class MedicionPage implements OnInit, OnDestroy {
 
   mediciones: Medicion[] = [];
   intervaloMediciones?: any;
-
+  dispositivoId:any;
+  private paramMapSub?: any;
 
   constructor(
     private route: ActivatedRoute,
     private medicionService: MedicionService,
-    private router: Router
+    private router: Router,
+ 
   ) {}
 
   ngOnInit() {
 
+      this.paramMapSub = this.route.paramMap.subscribe(async params => {
+      this.dispositivoId = Number(params.get('dispositivoId'));
+      if (!this.dispositivoId) {
+        console.warn('No se recibió un dispositivoId válido');
+        return;
+      }
+      
+    });
+
     this.cargarMediciones();
-    this.iniciarActualizacionMediciones(5000);
+    this.iniciarActualizacionMediciones(3000);
 
 
     /*this.route.queryParams.subscribe(params => {
@@ -81,6 +92,7 @@ export class MedicionPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.detenerActualizacionMediciones();
+    if (this.paramMapSub) this.paramMapSub.unsubscribe();
   }
 
   async cargarMediciones() {
@@ -98,7 +110,7 @@ export class MedicionPage implements OnInit, OnDestroy {
     }
   }
 
-  iniciarActualizacionMediciones(intervaloMs: number = 5000) {
+  iniciarActualizacionMediciones(intervaloMs: number = 3000) {
     if (this.intervaloMediciones) return;
     this.intervaloMediciones = setInterval(() => this.cargarMediciones(), intervaloMs);
   }

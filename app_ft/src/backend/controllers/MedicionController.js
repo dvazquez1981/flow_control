@@ -156,7 +156,8 @@ async function getAllByDeviceId(req, res) {
     console.log(`Buscando mediciones del dispositivoId: ${numDispositivoId}`);
 
     const mediciones = await Medicion.findAll({
-      where: { dispositivoId: numDispositivoId }
+      where: { dispositivoId: numDispositivoId }, order: [['medicionId', 'DESC']]
+
     });
 
     if (mediciones.length > 0) {
@@ -197,8 +198,8 @@ async function getUltimaMedicionByDeviceID(req, res) {
   
     res.status(200).json({ status: 1, data: ultima ? sanitize(ultima) : null });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error al obtener la medición', error: error.message });
+     console.error('Error al obtener la medicion');
+     res.status(500).json({ message: 'Algo salió mal', data: { error } });
   }
 }
 

@@ -270,15 +270,17 @@ async function getUltimoComandoByDeviceID(req, res) {
       order: [['cmdId', 'DESC']]
     });
     
-    if (!ultimo) {
-      console.error('no se encontro:', error);
-  
-      return res.status(404).json({ message: 'No se encontraron Comandos para este dispositivo.' });
-    }
+
    
-    res.status(200).json({ status: 1, data: sanitize(ultimo) });
+
+    console.log('Trato de obtener ultimo comando para este dispositivoId: '+ dispositivoId)
+  
+    res.status(200).json({ status: 1, data: ultimo ? sanitize(ultimo) : null });
+
+
+
   } catch (error) {
-    console.error(error);
+    console.error('Error al obtener el comando');
     res.status(500).json({ message: 'Error al obtener los coamndos', error: error.message });
   }
 }
