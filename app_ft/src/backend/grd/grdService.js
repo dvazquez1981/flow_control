@@ -27,7 +27,7 @@ async function sincronizarNuevos(grd_id) {
     });
 
     if (nuevos.length === 0) {
-      console.log(' No hay nuevas mediciones para insertar');
+      console.log('No hay nuevas mediciones para insertar');
       return;
     }
 
