@@ -3,10 +3,18 @@ var PORT    = 3000;
 
 var express = require('express')
 var mqtt=require('./mqtt/mqttService');
-
+var compression=require('compression');
 var cors = require('cors')
 var morgan = require('morgan')
 var logger = require('./utils/logger.js') // Importación del logger
+
+
+
+
+const  grddb=require('./bd/grddb.js');
+
+
+const sincronizarNuevos = require('./grd/grdService.js') 
 
 var app = express();
 
@@ -14,6 +22,10 @@ const corsOptions = {
     // Solo para desarrollo
     origin: '*',
 }
+
+
+
+app.use(compression());
 
 // to parse application/json
 app.use(express.json()); 

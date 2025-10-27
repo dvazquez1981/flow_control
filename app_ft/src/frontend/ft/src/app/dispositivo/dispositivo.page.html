@@ -1,5 +1,3 @@
-<!-- src/app/dispositivo/dispositivo.page.html -->
-
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -11,7 +9,7 @@
 
 <ion-content *ngIf="dispositivo" class="ion-padding">
 
-  <!--  Datos del dispositivo -->
+  <!-- Datos del dispositivo -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Dispositivo {{ dispositivo.dispositivoId }}</ion-card-title>
@@ -24,7 +22,7 @@
   </ion-card>
 
   <!-- Último comando -->
-  <ion-card *ngIf="ultimoComando; else noComando">
+  <ion-card *ngIf="ultimoComando; else sinComando">
     <ion-card-header>
       <ion-card-title>Último Comando</ion-card-title>
     </ion-card-header>
@@ -34,8 +32,8 @@
       <p><strong>Valor:</strong> {{ ultimoComando.valor }}</p>
       <p><strong>Fecha:</strong> {{ ultimoComando.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
 
-      <!--  Respuesta asociada -->
-      <div *ngIf="respuestasUltimoComando.length > 0; else sinRespuestas">
+      <!-- Respuesta asociada -->
+      <div *ngIf="(respuestasUltimoComando ?? []).length > 0; else sinRespuestas">
         <h4>Respuesta asociada:</h4>
         <ion-list>
           <ion-item *ngFor="let resp of respuestasUltimoComando">
@@ -54,8 +52,8 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- ❌ No hay comando -->
-  <ng-template #noComando>
+  <!-- Sin comandos -->
+  <ng-template #sinComando>
     <ion-card>
       <ion-card-header>
         <ion-card-title>Sin comandos</ion-card-title>
@@ -66,8 +64,8 @@
     </ion-card>
   </ng-template>
 
-  <!-- ➕ Crear nuevo comando -->
-  <ion-card>
+  <!-- Crear comando -->
+  <ion-card *ngIf="tieneTiposComandos">
     <ion-card-header>
       <ion-card-title>Crear Comando</ion-card-title>
     </ion-card-header>
@@ -83,10 +81,7 @@
 
       <ion-item>
         <ion-label position="floating">Valor del Comando</ion-label>
-        <ion-input
-          [(ngModel)]="valorComando"
-          
-        ></ion-input>
+        <ion-input [(ngModel)]="valorComando"></ion-input>
       </ion-item>
 
       <ion-button
@@ -97,34 +92,30 @@
       >
         Crear Comando
       </ion-button>
-
-
-      
     </ion-card-content>
   </ion-card>
-<!-- Última medición -->
-<ion-card *ngIf="ultimaMedicion">
-  <ion-card-header>
-    <ion-card-title>Última Medición</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    <p><strong>Fecha: </strong> {{ ultimaMedicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
-     <p><strong>Carril: </strong> {{ ultimaMedicion.carril }}</p>
-    <p><strong>Clasificacion id: </strong> {{ ultimaMedicion.clasificacionId }}</p>
-     <p><strong>Valor: </strong> {{ ultimaMedicion.valor }}</p>
-  </ion-card-content>
-  <ion-card-content>
-  <ion-button expand="block" color="secondary" (click)="verMediciones()">
-    Ver Mediciones
-  </ion-button>
-  </ion-card-content>
-</ion-card>
-  <!-- 🔍 Ver mediciones -->
-  
+
+  <!-- Última medición -->
+  <ion-card *ngIf="ultimaMedicion">
+    <ion-card-header>
+      <ion-card-title>Última Medición</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Fecha: </strong> {{ ultimaMedicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+      <p><strong>Carril: </strong> {{ ultimaMedicion.carril }}</p>
+      <p><strong>Clasificación id: </strong> {{ ultimaMedicion.clasificacionId }}</p>
+      <p><strong>Valor: </strong> {{ ultimaMedicion.valor }}</p>
+    </ion-card-content>
+    <ion-card-content>
+      <ion-button expand="block" color="secondary" (click)="verMediciones()">
+        Ver Mediciones
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>
 
-<!-- 🕓 En caso de que el dispositivo aún no haya cargado -->
+<!-- Si el dispositivo aún no está cargado -->
 <ion-content *ngIf="!dispositivo" class="ion-padding">
   <ion-card>
     <ion-card-header>

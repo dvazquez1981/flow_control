@@ -83,75 +83,49 @@ export class DispositivoPage implements OnInit, OnDestroy {
   }
 
   private async cargarDatosDelDispositivo(id: number) {
-    if (this.intervaloActualizar) {
-      clearInterval(this.intervaloActualizar);
-      this.intervaloActualizar = undefined;
-    }
-
+    // Reinicio todo para forzar refresco
     this.dispositivo = undefined;
     this.tiposComando = [];
     this.ultimoComando = undefined;
+    this.tipoSeleccionado = undefined;
+    this.valorComando = '';
     this.respuestasUltimoComando = [];
 
+    // Cargo dispositivo
     this.dispositivo = await this.dispositivoService.getDispositivo(id);
     if (!this.dispositivo) return;
 
+    // Cargo última medición
     try {
       this.ultimaMedicion = await this.medicionService.getUltimaMedicion(id);
     } catch {
       this.ultimaMedicion = {} as Medicion;
     }
 
+    // Cargo tipos de comando
     if (this.dispositivo.tipoContadorId != null) {
       try {
         const tipos = await this.tipoComandoService.obtenerPorTipoContadorId(this.dispositivo.tipoContadorId);
-        this.tiposComando = tipos?.length
-          ? tipos
-          : [{ tipoComandId: 0, tipoContadorId: this.dispositivo.tipoContadorId, descripcion: 'Sin comandos disponibles' }];
+        this.tiposComando = tipos ?? [];
       } catch {
-        this.tiposComando = [{ tipoComandId: 0, tipoContadorId: this.dispositivo.tipoContadorId, descripcion: 'Error al cargar comandos' }];
+        this.tiposComando = [];
       }
     } else {
-      this.tiposComando = [{ tipoComandId: 0, tipoContadorId: 0, descripcion: 'Sin tipo de contador' }];
+      this.tiposComando = [];
     }
 
+    // Cargo último comando
     await this.cargarUltimoComando(id);
 
-    // Intervalo que siempre intenta obtener respuestas y última medición
-this.intervaloActualizar = setInterval(async () => {
-  if (!this.dispositivo) return; // ✅ aseguramos que exista
-
-  try {
-    // Actualizar última medición
-    this.ultimaMedicion = await this.medicionService.getUltimaMedicion(this.dispositivo.dispositivoId);
-
-    // Obtener último comando
-    const ultimo = await this.comandoService.obtenerUltimoPorDispositivoId(this.dispositivo.dispositivoId);
-    this.ultimoComando = ultimo || undefined;
-    
-    
-    if (ultimo  != null) {
- 
-      const respuesta = await this.respuestaService.getRespuestasPorComando(ultimo.cmdId);
-      this.respuestasUltimoComando = respuesta ;
-    } else {
-      
-      this.respuestasUltimoComando = [];
-    }
-
-    this.cdr.detectChanges();
-  } catch (err) {
-    console.error('Error en intervalo de actualización:', err);
-  }
-}, 15000);
-
-
+    // Iniciar intervalo
+    if (this.intervaloActualizar) clearInterval(this.intervaloActualizar);
+    this.intervaloActualizar = setInterval(() => this.actualizarDatos(), 15000);
   }
 
   private async cargarUltimoComando(dispositivoId: number) {
     try {
       const ultimo = await this.comandoService.obtenerUltimoPorDispositivoId(dispositivoId);
-      this.ultimoComando = ultimo || undefined;
+      this.ultimoComando = ultimo ?? undefined;
 
       if (ultimo?.cmdId != null) {
         try {
@@ -166,6 +140,28 @@ this.intervaloActualizar = setInterval(async () => {
     } catch {
       this.ultimoComando = undefined;
       this.respuestasUltimoComando = [];
+    }
+  }
+
+  private async actualizarDatos() {
+    if (!this.dispositivo) return;
+
+    try {
+      this.ultimaMedicion = await this.medicionService.getUltimaMedicion(this.dispositivo.dispositivoId);
+
+      const ultimo = await this.comandoService.obtenerUltimoPorDispositivoId(this.dispositivo.dispositivoId);
+      this.ultimoComando = ultimo ?? undefined;
+
+      if (ultimo?.cmdId != null) {
+        const respuestas = await this.respuestaService.getRespuestasPorComando(ultimo.cmdId);
+        this.respuestasUltimoComando = respuestas ?? [];
+      } else {
+        this.respuestasUltimoComando = [];
+      }
+
+      this.cdr.detectChanges();
+    } catch (err) {
+      console.error('Error al actualizar datos:', err);
     }
   }
 
@@ -204,5 +200,9 @@ this.intervaloActualizar = setInterval(async () => {
     } catch (err) {
       console.error('Error al crear comando:', err);
     }
+  }
+
+  get tieneTiposComandos(): boolean {
+    return !!this.tiposComando && this.tiposComando.length > 0;
   }
 }

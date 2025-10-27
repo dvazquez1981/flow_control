@@ -31,20 +31,7 @@ const topicsListen = dispositivos.flatMap(d => [
 
 
     
-    //Publicar un comando de ejemplo a cada dispositivo
-  /*  for (const d of dispositivos) {
-        const cmd = {
-            fecha: new Date(),
-            tipoComandId: 1,
-            valor: "RESET",
-            dispositivoId: d.dispositivoId
-        };
-        const topic = `/dispositivo/${d.dispositivoId}/comando`;
-        client.publish(topic, JSON.stringify(cmd), {}, (err) => {
-            if (err) console.error('MQTT error al publicar comando', err);
-            else console.log(`MQTT comando enviado a ${topic}`);
-        });
-    }*/
+
 });
 //Escuchar de mensajes MQTT
 client.on('message', async (topic, payload) => {
@@ -168,7 +155,7 @@ client.on('message', async (topic, payload) => {
 
 
                 // Verificar dispositivo
-                  const deviceFound = await Dispositivo.findOne({
+                 const deviceFound = await Dispositivo.findOne({
                  where: { dispositivoId: numDispositivoId }
                  });
 

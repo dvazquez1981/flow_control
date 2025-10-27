@@ -21,7 +21,7 @@ const router = express.Router();
 // APIs
 router.get('/medicion', chequeoToken,getAll);
 //router.get('/medicion/:medicionId', sanitizeMiddlewareInput, chequeoToken, getOne);
-router.get('/medicion/dispositivo/:dispositivoId', sanitizeMiddlewareInput, chequeoToken, getAllByDeviceId);
+router.get('/medicion/dispositivo/:dispositivoId', sanitizeMiddlewareInput/*, chequeoToken*/, getAllByDeviceId);
 
 router.get('/medicion/ultima/:dispositivoId', sanitizeMiddlewareInput, chequeoToken, getUltimaMedicionByDeviceID);
 

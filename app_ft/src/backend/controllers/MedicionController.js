@@ -137,6 +137,10 @@ async function createMedicion(req, res) {
 async function getAllByDeviceId(req, res) {
   const { dispositivoId } = req.params;
 
+  const { limit= 100, offset = 0 } = req.query;
+
+ //console.log(`Buscando mediciones del dispositivoId: ${numDispositivoId} (limit ${limit}, offset ${offset})`);
+
   if (!dispositivoId) {
     return res.status(400).json({
       message: 'dispositivoId es obligatorio',
@@ -153,10 +157,13 @@ async function getAllByDeviceId(req, res) {
   }
 
   try {
-    console.log(`Buscando mediciones del dispositivoId: ${numDispositivoId}`);
+    console.log(`Buscando mediciones del dispositivoId: ${numDispositivoId} (limit ${limit}, offset ${offset})`);
 
     const mediciones = await Medicion.findAll({
-      where: { dispositivoId: numDispositivoId }, order: [['medicionId', 'DESC']]
+      where: { dispositivoId: numDispositivoId }, order: [['medicionId', 'DESC']],
+      
+      limit: parseInt(limit),
+      offset: parseInt(offset)
 
     });
 

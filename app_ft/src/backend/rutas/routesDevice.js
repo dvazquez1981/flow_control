@@ -20,11 +20,11 @@ const {
 const router = express.Router();
 
 // APIs
-router.get('/device', chequeoToken,  getAll);
-router.get('/device/:dispositivoId', sanitizeMiddlewareInput, chequeoToken, getOne);
-router.post('/device', sanitizeMiddlewareInput,chequeoToken,crearDevice);
-router.delete('/device/:dispositivoId', sanitizeMiddlewareInput,chequeoToken,deleteDevice);
-router.patch('/device/:dispositivoId', sanitizeMiddlewareInput,chequeoToken, updateDevice);
+router.get('/device', /*chequeoToken,*/  getAll);
+router.get('/device/:dispositivoId', sanitizeMiddlewareInput, /*chequeoToken,*/  getOne);
+router.post('/device', sanitizeMiddlewareInput,/*chequeoToken,*/ crearDevice);
+router.delete('/device/:dispositivoId', sanitizeMiddlewareInput,/*chequeoToken,*/ deleteDevice);
+router.patch('/device/:dispositivoId', sanitizeMiddlewareInput,/*chequeoToken,*/  updateDevice);
 
 
 module.exports = router;
