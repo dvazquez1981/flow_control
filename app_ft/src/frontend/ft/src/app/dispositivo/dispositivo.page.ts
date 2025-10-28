@@ -15,6 +15,9 @@ import { TipoComandoService, TipoComando } from '../services/tipo-comando.servic
 import { ComandoService, Comando } from '../services/comando.service';
 import { MedicionService, Medicion } from '../services/medicion.service';
 import { RespuestaService, Respuesta } from '../services/respuesta.service';
+import { TipoContadorService, TipoContador} from '../services/tipo-contador.service';
+
+import { FechaLocalPipe } from '../pipes/fecha-local.pipe';
 
 @Component({
   selector: 'app-dispositivo',
@@ -40,7 +43,8 @@ import { RespuestaService, Respuesta } from '../services/respuesta.service';
     IonButtons,
     IonSelect,
     IonSelectOption,
-    IonInput
+    IonInput,
+    FechaLocalPipe
   ]
 })
 export class DispositivoPage implements OnInit, OnDestroy {
@@ -51,6 +55,7 @@ export class DispositivoPage implements OnInit, OnDestroy {
   valorComando: string = '';
   ultimaMedicion: Medicion = {} as Medicion;
   respuestasUltimoComando: Respuesta[] = [];
+  tipoContador?: TipoContador;
 
   private intervaloActualizar?: any;
   private paramMapSub?: any;
@@ -63,6 +68,7 @@ export class DispositivoPage implements OnInit, OnDestroy {
     private comandoService: ComandoService,
     private medicionService: MedicionService,
     private respuestaService: RespuestaService,
+    private tipoContadorService:TipoContadorService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -105,6 +111,7 @@ export class DispositivoPage implements OnInit, OnDestroy {
     // Cargo tipos de comando
     if (this.dispositivo.tipoContadorId != null) {
       try {
+       // this.tipoContador=await this.tipoContadorService.get
         const tipos = await this.tipoComandoService.obtenerPorTipoContadorId(this.dispositivo.tipoContadorId);
         this.tiposComando = tipos ?? [];
       } catch {
@@ -126,10 +133,15 @@ export class DispositivoPage implements OnInit, OnDestroy {
     try {
       const ultimo = await this.comandoService.obtenerUltimoPorDispositivoId(dispositivoId);
       this.ultimoComando = ultimo ?? undefined;
+  
+
+      
+
 
       if (ultimo?.cmdId != null) {
         try {
           const respuestas = await this.respuestaService.getRespuestasPorComando(ultimo.cmdId);
+          
           this.respuestasUltimoComando = respuestas ?? [];
         } catch {
           this.respuestasUltimoComando = [];

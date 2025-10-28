@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UnidadPipe } from '../pipes/unidad.pipe';
 import { ResaltarDirective } from '../directives/resaltar.directive';
 import { IonicModule } from '@ionic/angular';
+import { FechaLocalPipe } from '../pipes/fecha-local.pipe';
 
 import {
   IonContent,
@@ -47,6 +48,7 @@ import { MedicionService, Medicion } from '../services/medicion.service';
     IonBackButton,
     IonButtons,
     IonText,
+    FechaLocalPipe
   ]
 })
 export class MedicionPage implements OnInit, OnDestroy {

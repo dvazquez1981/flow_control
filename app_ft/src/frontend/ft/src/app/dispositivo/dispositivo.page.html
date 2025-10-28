@@ -30,7 +30,8 @@
       <p><strong>ID:</strong> {{ ultimoComando.cmdId }}</p>
       <p><strong>Tipo de comando:</strong> {{ ultimoComando.tipoComandId }}</p>
       <p><strong>Valor:</strong> {{ ultimoComando.valor }}</p>
-      <p><strong>Fecha:</strong> {{ ultimoComando.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+      <p><strong>Fecha:</strong> {{ ultimoComando.fecha | fechaLocal }}</p>
+
 
       <!-- Respuesta asociada -->
       <div *ngIf="(respuestasUltimoComando ?? []).length > 0; else sinRespuestas">
@@ -40,7 +41,8 @@
             <ion-label>
               <p><strong>ID:</strong> {{ resp.RespId }}</p>
               <p><strong>Valor:</strong> {{ resp.valor }}</p>
-              <p><strong>Fecha:</strong> {{ resp.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+              <p><strong>Fecha:</strong> {{ ultimoComando.fecha  | fechaLocal }}</p>
+
             </ion-label>
           </ion-item>
         </ion-list>
@@ -101,7 +103,9 @@
       <ion-card-title>Última Medición</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Fecha: </strong> {{ ultimaMedicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+
+      
+      <p><strong>Fecha: </strong> {{ ultimaMedicion.fecha | fechaLocal}}</p>
       <p><strong>Carril: </strong> {{ ultimaMedicion.carril }}</p>
       <p><strong>Clasificación id: </strong> {{ ultimaMedicion.clasificacionId }}</p>
       <p><strong>Valor: </strong> {{ ultimaMedicion.valor }}</p>

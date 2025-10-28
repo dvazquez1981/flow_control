@@ -13,6 +13,8 @@ import {
 } from '@ionic/angular/standalone'; // <-- asegúrate de incluirlos todos
 import { Router } from '@angular/router';
 import { DispositivoService, Dispositivo } from '../services/dispositivo.service';
+import { TipoContadorService, TipoContador} from '../services/tipo-contador.service';
+
 
 @Component({
   selector: 'app-listado-dispositivos',
@@ -35,16 +37,33 @@ import { DispositivoService, Dispositivo } from '../services/dispositivo.service
 export class ListadoDispositivosPage implements OnInit {
   dispositivos: Dispositivo[] = [];
 
-  constructor(private dispositivoService: DispositivoService, private router: Router) {}
+  tiposContador: TipoContador[] = [];
 
-  async ngOnInit() {
-    try {
-      this.dispositivos = await this.dispositivoService.getDispositivos();
-      console.log('Dispositivos:', this.dispositivos);
-    } catch (error) {
-      console.error('Error al cargar dispositivos:', error);
-    }
+  constructor(private dispositivoService: DispositivoService, private tipoContadorService: TipoContadorService,private router: Router) {}
+
+ async ngOnInit() {
+  try {
+    // Traemos dispositivos y tipos de contador en paralelo
+    const [dispositivos, tipos] = await Promise.all([
+      this.dispositivoService.getDispositivos(),
+      this.tipoContadorService.getTiposContador()
+    ]);
+
+  this.tiposContador = tipos;
+    // Mapear la descripción sobre cada dispositivo
+     this.dispositivos = dispositivos.map(disp => {
+      const tipo = tipos.find(t => String(t.TC_Id) === String(disp.tipoContadorId));
+      return { ...disp, tipoContadorDescripcion: tipo?.TC_TipoContador || 'Desconocido' };
+    });
+
+    console.log('Dispositivos:', this.dispositivos);
+    console.log('Tipo contador:',this.tiposContador);
+
+  } catch (error) {
+    console.error('Error al cargar dispositivos:', error);
   }
+}
+
 
 verDetalle(dispositivo: Dispositivo | any) {
   

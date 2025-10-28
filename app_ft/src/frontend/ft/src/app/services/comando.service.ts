@@ -56,7 +56,7 @@ async obtenerUltimoPorDispositivoId(dispositivoId: number): Promise<Comando | nu
       )
     );
 
-    console.log('📦 Respuesta del backend (último comando):', response);
+    console.log(' Respuesta del backend (último comando):', response);
 
     if (response && response.data) {
       return response.data as Comando;
@@ -64,7 +64,7 @@ async obtenerUltimoPorDispositivoId(dispositivoId: number): Promise<Comando | nu
 
     return null;
   } catch (error) {
-    console.error('❌ Error al obtener último comando por dispositivoId:', error);
+    console.error('Error al obtener último comando por dispositivoId:', error);
     return null;
   }
 }

@@ -5,11 +5,13 @@ import { firstValueFrom, throwError, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export interface Dispositivo {
-  dispositivoId: number; 
+  dispositivoId: number;
   nombre: string;
   ubicacion: string;
   tipoContadorId: number;
+
   
+  tipoContadorDescripcion?: string;
 }
 
 @Injectable({
