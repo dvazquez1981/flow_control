@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-     <ion-buttons slot="start">
+    <ion-buttons slot="start">
       <ion-back-button [defaultHref]="'/dispositivo/' + dispositivoId"></ion-back-button>
     </ion-buttons>
     <ion-title>Mediciones registradas - Dispositivo {{ dispositivoId }}</ion-title>
@@ -9,20 +9,30 @@
 
 <ion-content class="page-mediciones" fullscreen>
 
-  <ng-container *ngIf="mediciones && mediciones.length > 0; else sinMediciones">
-    <ion-list lines="inset">
-      <ion-item
-        *ngFor="let medicion of mediciones; trackBy: trackMedicion">
-        <ion-label class="ion-text-wrap">
-          <h2>{{ medicion.fecha | fechaLocal  }}</h2>
-          <p>
-            Carril: <strong>{{ medicion.carril }}</strong> <br />
-            Clasificación: <strong>{{ medicion.clasificacionDescripcion }}</strong> <br />
-            Valor: <strong>{{ +medicion.valor | unidad:'Vehículos' }}</strong>
-          </p>
+  <ng-container *ngIf="medicionesAgrupadas && medicionesAgrupadas.length > 0; else sinMediciones">
+
+    <ion-list *ngFor="let grupo of medicionesAgrupadas" lines="none">
+
+      <!-- Encabezado de grupo por fecha -->
+      <ion-list-header color="light">
+        <ion-label>
+          <strong>{{ grupo.fecha | fechaLocal }}</strong>
         </ion-label>
-      </ion-item>
+      </ion-list-header>
+
+      <!-- Fila horizontal de mediciones -->
+      <div class="fila-mediciones">
+        <ion-item class="medicion-item" *ngFor="let medicion of grupo.mediciones; trackBy: trackMedicion">
+          <ion-label class="ion-text-center">
+            <p><strong>Carril: {{ medicion.carril }}</strong></p>
+            <p>Clasificación: {{ medicion.clasificacionDescripcion }}</p>
+            <p>Valor: {{ +medicion.valor | unidad:'Vehiculos' }}</p>
+          </ion-label>
+        </ion-item>
+      </div>
+
     </ion-list>
+
   </ng-container>
 
   <ng-template #sinMediciones>
@@ -32,3 +42,4 @@
   </ng-template>
 
 </ion-content>
+

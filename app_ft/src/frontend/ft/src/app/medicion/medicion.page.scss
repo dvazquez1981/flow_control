@@ -47,7 +47,41 @@
     }
   }
 
-  /* 📋 Ítems */
+  /* 🔹 Fila horizontal de mediciones */
+  .fila-mediciones {
+    display: flex;
+    flex-wrap: nowrap;       /* fila horizontal */
+    overflow-x: auto;        /* scroll horizontal si hay muchas */
+    gap: 16px;               /* separación entre bloques */
+    padding: 10px 12px;      /* espacio interno */
+  }
+
+  /* ✨ Item de medición dinámico y más ancho */
+  .medicion-item {
+    flex: 1 0 auto;           /* puede crecer según espacio disponible */
+    min-width: 300px;         /* ancho mínimo más cómodo */
+    max-width: 400px;         /* ancho máximo para no desbordar */
+    --background: var(--ion-color-light);
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 12px 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    word-break: break-word;   /* permite que el texto largo se rompa */
+
+    p {
+      margin: 6px 0;          /* separación vertical entre líneas */
+      line-height: 1.3;
+    }
+
+    /* Animación */
+    animation: slideInUp 0.35s ease-out both;
+  }
+
+  /* 📋 Ítems normales (si los usas fuera de fila) */
   ion-item {
     --background: rgba(255, 255, 255, 0.95);
     --border-radius: 12px;
@@ -119,10 +153,6 @@
       transform: translateY(0);
     }
   }
-
-  ion-item {
-    animation: slideInUp 0.35s ease-out both;
-  }
 }
 
 /* 📱 Responsive */
@@ -139,6 +169,17 @@
         font-size: 0.95rem;
       }
     }
+  }
+
+  .fila-mediciones {
+    gap: 12px;
+    padding: 8px 10px;
+  }
+
+  .medicion-item {
+    min-width: 200px;     /* más pequeño en móvil */
+    max-width: 300px;     /* no se haga demasiado grande */
+    padding: 10px 6px;
   }
 }
 

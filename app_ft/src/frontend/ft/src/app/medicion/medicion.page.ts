@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NgIf, NgFor,CommonModule } from '@angular/common';
+import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UnidadPipe } from '../pipes/unidad.pipe';
 import { ResaltarDirective } from '../directives/resaltar.directive';
@@ -18,12 +18,12 @@ import {
   IonFooter,
   IonBackButton,
   IonButtons,
-  IonText  ,
-  IonListHeader
+  IonText,
+  IonListHeader,
   
 } from '@ionic/angular/standalone';
 import { MedicionService, Medicion } from '../services/medicion.service';
-import { ClasificacionService, Clasificacion} from '../services/clasificacion.service';
+import { ClasificacionService, Clasificacion } from '../services/clasificacion.service';
 
 @Component({
   selector: 'app-medicion',
@@ -31,12 +31,13 @@ import { ClasificacionService, Clasificacion} from '../services/clasificacion.se
   styleUrls: ['./medicion.page.scss'],
   standalone: true,
   imports: [
+    
     IonListHeader,
     UnidadPipe,
     ResaltarDirective,
     CommonModule,
-    NgIf,        
-    NgFor,        
+    NgIf,
+    NgFor,
     IonContent,
     IonHeader,
     IonTitle,
@@ -53,34 +54,29 @@ import { ClasificacionService, Clasificacion} from '../services/clasificacion.se
   ]
 })
 export class MedicionPage implements OnInit, OnDestroy {
-
   mediciones: Medicion[] = [];
+  medicionesAgrupadas: any[] = [];
   intervaloMediciones?: any;
-  dispositivoId:any;
+  dispositivoId: any;
   private paramMapSub?: any;
 
   constructor(
     private route: ActivatedRoute,
     private medicionService: MedicionService,
-
-    private router: Router,
- 
+    private router: Router
   ) {}
 
   ngOnInit() {
-
-      this.paramMapSub = this.route.paramMap.subscribe(async params => {
+    this.paramMapSub = this.route.paramMap.subscribe(async params => {
       this.dispositivoId = Number(params.get('dispositivoId'));
       if (!this.dispositivoId) {
         console.warn('No se recibió un dispositivoId válido');
         return;
       }
-      
     });
 
     this.cargarMediciones();
     this.iniciarActualizacionMediciones(30000);
-
   }
 
   ngOnDestroy() {
@@ -97,11 +93,35 @@ export class MedicionPage implements OnInit, OnDestroy {
       this.mediciones = datos.sort(
         (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );
-      console.log('Mediciones cargadas:', this.mediciones);
+
+      // 🔹 Agrupar por hora
+      this.medicionesAgrupadas = this.agruparPorFecha(this.mediciones);
+
+      console.log('Mediciones agrupadas:', this.medicionesAgrupadas);
     } catch (error) {
       console.error('Error al cargar mediciones:', error);
     }
   }
+
+agruparPorFecha(mediciones: Medicion[]): any[] {
+  const grupos: { [fecha: string]: Medicion[] } = {};
+
+  for (const m of mediciones) {
+    // 🔹 Redondeamos a formato exacto de fecha (sin milisegundos)
+    const fechaCompleta = new Date(m.fecha).toISOString().slice(0, 19); // yyyy-MM-ddTHH:mm:ss
+
+    if (!grupos[fechaCompleta]) grupos[fechaCompleta] = [];
+    grupos[fechaCompleta].push(m);
+  }
+
+  // 🔹 Convertimos a array y ordenamos las mediciones por carril dentro de cada grupo
+  return Object.entries(grupos).map(([fecha, lista]) => ({
+    fecha,
+    mediciones: lista.sort((a, b) => a.carril - b.carril)
+  }));
+}
+
+
 
   iniciarActualizacionMediciones(intervaloMs: number = 10000) {
     if (this.intervaloMediciones) return;
@@ -115,7 +135,6 @@ export class MedicionPage implements OnInit, OnDestroy {
     }
   }
 
-    //  Esta función es la que elimina el error
   trackMedicion(index: number, medicion: any): any {
     return medicion.id || index;
   }
