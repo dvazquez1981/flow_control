@@ -22,7 +22,10 @@ const Usuario=ftdb.define('Usuario',{
     },
     lastLogin:{
         type: Sequelize.DATE,
-    }
+    },
+     userGroup:{
+        type: DataTypes.STRING,
+           },
 } , {
     tableName: 'Usuario',
     timestamps: false

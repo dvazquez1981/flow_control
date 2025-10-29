@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS `Dispositivo`;
 DROP TABLE IF EXISTS `TipoEstado`;
 DROP TABLE IF EXISTS `TipoComando`;
 DROP TABLE IF EXISTS `TipoContador`;
-DROP TABLE IF EXISTS `Usuario`;
+
 DROP TABLE IF EXISTS `userGroups`;
 
 -- TABLA userGroups
@@ -139,6 +139,8 @@ CREATE TABLE `Medicion` (
   FOREIGN KEY (`dispositivoId`) REFERENCES `Dispositivo`(`dispositivoId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+DROP TABLE IF EXISTS `Usuario`;
 -- TABLA Usuario
 CREATE TABLE `Usuario` (
   `userId` INT NOT NULL AUTO_INCREMENT,

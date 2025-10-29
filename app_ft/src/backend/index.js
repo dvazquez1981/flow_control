@@ -26,7 +26,6 @@ const corsOptions = {
 
 
 app.use(compression());
-
 // to parse application/json
 app.use(express.json()); 
 // to serve static files
@@ -40,6 +39,8 @@ const rutasUsuario= require('./rutas/routesUsuario.js')
 const rutasComando= require('./rutas/routesComando.js')
 const rutasRespuesta=require('./rutas/routesRespuesta.js')
 const rutasTipoComando=require('./rutas/routesTipoComando.js')
+const rutasTipoContador=require('./rutas/routesTipoContador.js')
+const rutasClasificacion=require('./rutas/routesClasificacion.js')
 //ruta
 app.use(rutasRespuesta);
 app.use(rutasDevice);
@@ -47,6 +48,8 @@ app.use(rutasMedicion);
 app.use(rutasUsuario);
 app.use(rutasTipoComando);
 app.use(rutasComando);
+app.use(rutasTipoContador);
+app.use(rutasClasificacion);
 
 
 // Ruta simple para comprobar el estado del servidor

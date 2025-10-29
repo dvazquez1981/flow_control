@@ -20,9 +20,9 @@ async function sincronizarNuevos(grd_id) {
       }
     );
 
-    //  Filtrar solo registros más recientes que la última fecha
+    //Filtrar solo registros más recientes que la última fecha
     const nuevos = results.filter(r => {
-      const fecha = new Date(r.ano, r.mes - 1, r.dia, r.hora, r.minutos, r.segundos);
+      const fecha = new Date(Date.UTC(r.ano, r.mes - 1, r.dia, r.hora, r.minutos, r.segundos));
       return !ultimaFecha || fecha > ultimaFecha;
     });
 
@@ -75,21 +75,10 @@ async function sincronizarNuevos(grd_id) {
           dispositivoId: r.grd_id
         });
      
-     
-     
-     
-     
-     
-     
-     
       }
 
 
-   
-      
-    
-
-    // Insertar todos los registros nuevos de golpe
+    //Insertar todos los registros nuevos de golpe
     await Medicion.bulkCreate(mediciones);
     console.log(`Insertadas ${mediciones.length} nuevas mediciones`);
 
@@ -100,7 +89,7 @@ async function sincronizarNuevos(grd_id) {
 
 setInterval(() => {
   sincronizarNuevos(15); // grd_id = 15
-}, 30000); // cada 5 segundos, por ejemplo
+}, 60000); // cada 60 segundos, por ejemplo
 
 
 module.exports = {

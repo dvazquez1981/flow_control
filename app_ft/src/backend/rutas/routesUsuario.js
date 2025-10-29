@@ -9,7 +9,7 @@ const router = express.Router();
 const  {  
     getAll,
     login,
-
+    chequeoGrupoUsuario,
     chequeoToken,
     getOne,
     crearUsuario,
@@ -20,14 +20,14 @@ const  {
 /** Controladores */
 
 /** Obtener todos  los  usuarios */
-router.get('/usuario',/*chequeoToken,*/getAll);
+router.get('/usuario',chequeoToken, chequeoGrupoUsuario(['admin']),getAll);
 
 /** loguearse */
 router.post('/usuario/login',login);
 
 /** Obtener datos de un usuario */
 //name
-router.get('/usuario/:userId',chequeoToken,getOne);
+router.get('/usuario/:userId',chequeoToken, chequeoGrupoUsuario(['admin']),getOne);
 
 /** crear un usuario */
 //body:
@@ -35,11 +35,11 @@ router.get('/usuario/:userId',chequeoToken,getOne);
 //user_pass
 //grupo
 /** Crear un nuevo usuario */
-router.post('/usuario', chequeoToken, crearUsuario);
+router.post('/usuario', chequeoToken,chequeoGrupoUsuario(['admin']), crearUsuario);
 
 /** borra usuario */
 //:user_name
-router.delete('/usuario/:userId' ,chequeoToken,  deleteUsuario);
+router.delete('/usuario/:userId' ,chequeoToken,chequeoGrupoUsuario(['admin']),  deleteUsuario);
 
 /** update usuario */
 //user_name

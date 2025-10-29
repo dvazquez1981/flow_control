@@ -23,6 +23,7 @@ import {
   
 } from '@ionic/angular/standalone';
 import { MedicionService, Medicion } from '../services/medicion.service';
+import { ClasificacionService, Clasificacion} from '../services/clasificacion.service';
 
 @Component({
   selector: 'app-medicion',
@@ -61,6 +62,7 @@ export class MedicionPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private medicionService: MedicionService,
+
     private router: Router,
  
   ) {}
@@ -77,19 +79,8 @@ export class MedicionPage implements OnInit, OnDestroy {
     });
 
     this.cargarMediciones();
-    this.iniciarActualizacionMediciones(3000);
+    this.iniciarActualizacionMediciones(30000);
 
-
-    /*this.route.queryParams.subscribe(params => {
-      this.valvulaAbierta = params['valvulaAbierta'] === 'true' || params['valvulaAbierta'] === '1';
-      console.log('Válvula abierta?', this.valvulaAbierta);
-    });
-
-    this.cargarMediciones();
-
-    if (this.valvulaAbierta) {
-      this.iniciarActualizacionMediciones(5000);
-    }*/
   }
 
   ngOnDestroy() {
@@ -112,7 +103,7 @@ export class MedicionPage implements OnInit, OnDestroy {
     }
   }
 
-  iniciarActualizacionMediciones(intervaloMs: number = 3000) {
+  iniciarActualizacionMediciones(intervaloMs: number = 10000) {
     if (this.intervaloMediciones) return;
     this.intervaloMediciones = setInterval(() => this.cargarMediciones(), intervaloMs);
   }

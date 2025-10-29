@@ -279,12 +279,12 @@ async function updateUsuario(req, res) {
 /* crear usuario */
 async function crearUsuario(req, res) 
  {
-    const { name, password, descrip } = req.body;
+    const { name, password, descrip, userGroup } = req.body;
 
     // Validar que todos los campos requeridos están presentes
-    if (name===undefined || password ===undefined ) {
+    if (name===undefined || password ===undefined||  userGroup===undefined  ) {
         return res.status(400).json({
-            message: 'El nombre de usuario, la contraseña son obligatorios.',
+            message: 'El nombre de usuario, la contraseña, y el grupo de usuarios son obligatorios.',
             status: 0,
         });
     }
@@ -328,7 +328,7 @@ async function chequeoToken(req,res,next){
     
 const bearerHeader = req.headers['token'];
 
-    if (!bearerHeader) {
+if (!bearerHeader) {
   return res.status(401).json({ message: 'Token no proporcionado.' });
 }
 
@@ -349,7 +349,54 @@ try {
  }
  
 
+/*reviso que este habilitado el grupo*/ 
+function chequeoGrupoUsuario(grupos) {
+    return async function (req, res, next) {
+     
+     
+const bearerHeader = req.headers['token'];
 
+if (!bearerHeader) {
+  return res.status(401).json({ message: 'Token no proporcionado.' });
+}
+
+// Separar "Bearer" del token
+const token = bearerHeader.startsWith('Bearer ') ? bearerHeader.slice(7) : bearerHeader;
+
+try {
+  const decoded = jwt.verify(token, JWT_SECRET);
+  req.user = decoded;
+
+// Busco al usuario en la base de datos y verifico si pertenece al grupo
+const userFound = await Usuario.findOne({
+                where: {
+                     name:decoded.userFound.name,
+                     userGroup: grupos 
+            }});
+
+if (!userFound) {
+                return res.status(403).json({
+                    message: `Acceso Denegado. El usuario no pertenece a ninguno de los grupos requeridos: ${grupos.join(', ')}.`
+                });
+            }
+   // Obtener la fecha en la zona horaria de Argentina
+   const fechaLocal = moment.tz("America/Argentina/Buenos_Aires").format('YYYY-MM-DD HH:mm:ss');
+    await userFound.update({
+                lastLogin: fechaLocal,
+            });
+  console.log(`Usuario validado para grupos '${grupos}': ${decoded.userFound.name}`);
+  next();
+} catch (err) {
+  console.error("Error al verificar token:", err);
+  return res.status(403).json({ message: 'Token inválido.' });
+}
+
+     
+}
+     
+     
+    
+}
 
 module.exports = {
   getAll,
@@ -358,6 +405,7 @@ module.exports = {
   updateUsuario,
   login,
   deleteUsuario,
-  chequeoToken
+  chequeoToken,
+  chequeoGrupoUsuario
 
 };

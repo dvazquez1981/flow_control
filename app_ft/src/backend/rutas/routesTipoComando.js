@@ -19,11 +19,11 @@ const {
 const router = express.Router();
 
 // APIs
-router.get('/tipoComando', /*chequeoToken, */ getAll);
-router.get('/tipoComando/:tipoComandId', sanitizeMiddlewareInput,/* chequeoToken, */getOne);
+router.get('/tipoComando', chequeoToken,  getAll);
+router.get('/tipoComando/:tipoComandId', sanitizeMiddlewareInput, chequeoToken, getOne);
 router.post('/tipoComando', sanitizeMiddlewareInput,chequeoToken,crearTipoComando);
 router.delete('/tipoComando/:tipoComandId', sanitizeMiddlewareInput,chequeoToken,deleteTipoComando);
 router.patch('/tipoComando/:tipoComandId', sanitizeMiddlewareInput,chequeoToken, updateTipoComando);
-router.get('/tipoComando/tipoContador/:tipoContadorId', sanitizeMiddlewareInput,/* chequeoToken, */   getAllByTipoContadorId);
+router.get('/tipoComando/tipoContador/:tipoContadorId', sanitizeMiddlewareInput, chequeoToken, getAllByTipoContadorId);
 
 module.exports = router;

@@ -25,8 +25,8 @@ async function getAll(req, res) {
 
 /** Obtener una clasificación por ID */
 async function getOne(req, res) {
-  const { clasificacionId } = req.params;
-  console.log("get clasificacion id:", clasificacionId);
+  const { clasificacionId, tipoContadorId } = req.params;
+  console.log("get clasificacion id:", clasificacionId," tipo contador id:",tipoContadorId);
 
   if (clasificacionId === undefined) {
     console.log('clasificacionId es obligatorio');
@@ -39,9 +39,29 @@ async function getOne(req, res) {
     return res.status(400).json({ message: 'el valor de clasificacionId no es un número', status: 0 });
   }
 
+
+   if (tipoContadorId === undefined) {
+    console.log('tipoContadorId es obligatorio');
+    return res.status(400).json({ message: 'tipoContadorId es obligatorio', status: 0 });
+  }
+
+  const numeroTipoContadorId = parseInt(tipoContadorId);
+  if (isNaN(numeroTipoContadorId)) {
+    console.log('el valor de tipoContadorId no es un número');
+    return res.status(400).json({ message: 'el valor de tipoContadorId no es un número', status: 0 });
+  }
+
+
+
+
   try {
 
-    const clasificacion = await Clasificacion.findOne({ where: { clasificacionId: numeroId } });
+    const clasificacion = await Clasificacion.findOne(
+      
+      
+      { where: { clasificacionId: numeroId,
+        tipoContadorId:numeroTipoContadorId
+       } });
     if (clasificacion) {
       console.log("Clasificación encontrada");
       res.status(200).json(sanitize(clasificacion));

@@ -2,6 +2,7 @@ const Medicion = require('../models/Medicion.js');
 const Dispositivo = require('../models/Dispositivo.js');
 const { sanitize } = require('../utils/sanitize.js');
 const Clasificacion = require('../models/Clasificacion.js');
+const  ftdb= require('../bd/ftdb.js');
 
 // Obtener todas las mediciones
 async function getAll(req, res) {
@@ -96,6 +97,8 @@ async function createMedicion(req, res) {
       });
     }
 
+    
+
 
     // Evitar duplicados exactos (misma fecha, dispositivo y carril)
     const existing = await Medicion.findOne({
@@ -159,16 +162,30 @@ async function getAllByDeviceId(req, res) {
   try {
     console.log(`Buscando mediciones del dispositivoId: ${numDispositivoId} (limit ${limit}, offset ${offset})`);
 
-    const mediciones = await Medicion.findAll({
-      where: { dispositivoId: numDispositivoId }, order: [['medicionId', 'DESC']],
-      
-      limit: parseInt(limit),
-      offset: parseInt(offset)
 
-    });
+const medicionesConDescripcion = await ftdb.query(`
+ select m.* , c.descripcion  as clasificacionDescripcion
+ from Medicion m, Dispositivo d, Clasificacion c 
+ WHERE d.dispositivoId=m.dispositivoId 
+ and d.tipoContadorId=c.tipoContadorId 
+ and c.clasificacionId=m.clasificacionId
+ and d.dispositivoId=:dispositivoId
+  ORDER BY m.medicionId DESC
+  LIMIT :limit OFFSET :offset
+`, {
+  replacements: { 
+    dispositivoId: numDispositivoId, 
+    limit: parseInt(limit), 
+    offset: parseInt(offset) 
+  },
+  type: ftdb.QueryTypes.SELECT
+});
 
-    if (mediciones.length > 0) {
-      res.status(200).json(sanitize(mediciones));
+
+ 
+
+    if (medicionesConDescripcion.length > 0) {
+      res.status(200).json(sanitize(medicionesConDescripcion));
     } else {
       res.status(404).json({ message: 'No se encontraron mediciones.' });
     }

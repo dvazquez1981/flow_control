@@ -4,7 +4,7 @@ const express = require('express');
 const {sanitizeMiddlewareInput}  = require('../utils/sanitize.js');
 
 const {
-
+    chequeoGrupoUsuario,
     chequeoToken } =require('../controllers/UsuarioController.js')
     // chequeoGrupoUsuario,
 const {
@@ -20,7 +20,7 @@ const {
 const router = express.Router();
 
 // APIs
-router.get('/device', /*chequeoToken,*/  getAll);
+router.get('/device', chequeoToken,chequeoGrupoUsuario(['admin']),  getAll);
 router.get('/device/:dispositivoId', sanitizeMiddlewareInput, /*chequeoToken,*/  getOne);
 router.post('/device', sanitizeMiddlewareInput,/*chequeoToken,*/ crearDevice);
 router.delete('/device/:dispositivoId', sanitizeMiddlewareInput,/*chequeoToken,*/ deleteDevice);

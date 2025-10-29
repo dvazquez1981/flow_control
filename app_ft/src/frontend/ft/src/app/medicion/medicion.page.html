@@ -17,7 +17,7 @@
           <h2>{{ medicion.fecha | fechaLocal  }}</h2>
           <p>
             Carril: <strong>{{ medicion.carril }}</strong> <br />
-            Clasificación ID: <strong>{{ medicion.clasificacionId }}</strong> <br />
+            Clasificación: <strong>{{ medicion.clasificacionDescripcion }}</strong> <br />
             Valor: <strong>{{ +medicion.valor | unidad:'Vehículos' }}</strong>
           </p>
         </ion-label>
