@@ -9,6 +9,7 @@ export interface Comando {
   tipoComandId: number;
   valor: string | null;
   dispositivoId: number;
+  descripcionComando:string
 }
 
 @Injectable({
