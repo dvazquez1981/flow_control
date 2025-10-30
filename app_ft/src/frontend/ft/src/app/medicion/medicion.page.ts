@@ -102,28 +102,31 @@ export class MedicionPage implements OnInit, OnDestroy {
       console.error('Error al cargar mediciones:', error);
     }
   }
-
 agruparPorFecha(mediciones: Medicion[]): any[] {
-  const grupos: { [fecha: string]: Medicion[] } = {};
+  const grupos: { [clave: string]: Medicion[] } = {};
 
   for (const m of mediciones) {
-    // 🔹 Redondeamos a formato exacto de fecha (sin milisegundos)
-    const fechaCompleta = new Date(m.fecha).toISOString().slice(0, 19); // yyyy-MM-ddTHH:mm:ss
+    const fecha = new Date(m.fecha);
 
-    if (!grupos[fechaCompleta]) grupos[fechaCompleta] = [];
-    grupos[fechaCompleta].push(m);
+    // 🔹 Redondeamos a minutos (sin segundos ni milisegundos) para evitar duplicaciones
+    const clave = fecha.toLocaleString('sv-SE', {
+      timeZone: 'America/Argentina/Buenos_Aires',
+      hour12: false
+    }).slice(0, 16); // "YYYY-MM-DDTHH:mm"
+
+    if (!grupos[clave]) grupos[clave] = [];
+    grupos[clave].push(m);
   }
 
-  // 🔹 Convertimos a array y ordenamos las mediciones por carril dentro de cada grupo
-  return Object.entries(grupos).map(([fecha, lista]) => ({
-    fecha,
+  return Object.entries(grupos).map(([clave, lista]) => ({
+    fecha: new Date(clave), // el pipe la muestra bien
     mediciones: lista.sort((a, b) => a.carril - b.carril)
   }));
 }
 
 
 
-  iniciarActualizacionMediciones(intervaloMs: number = 10000) {
+  iniciarActualizacionMediciones(intervaloMs: number = 25000) {
     if (this.intervaloMediciones) return;
     this.intervaloMediciones = setInterval(() => this.cargarMediciones(), intervaloMs);
   }
