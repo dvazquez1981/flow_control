@@ -105,7 +105,7 @@ async function createMedicion(req, res) {
       where: { fecha, dispositivoId: numDispositivoId, carril }
     });
 
-    if (existing) {
+    if (existing ) {
       return res.status(422).json({
         message: 'Ya existe una medición con esos datos',
         status: 0

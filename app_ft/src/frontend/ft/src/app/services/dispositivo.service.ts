@@ -9,8 +9,6 @@ export interface Dispositivo {
   nombre: string;
   ubicacion: string;
   tipoContadorId: number;
-
-  
   tipoContadorDescripcion?: string;
 }
 

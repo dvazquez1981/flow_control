@@ -11,7 +11,6 @@ export interface Medicion {
   carril: number;
   clasificacionId: number;
   tipoContadorId: number;  
-  clasificacionDescripcion?: string;
   dispositivoId: number;
 }
 

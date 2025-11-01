@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 import { DispositivoService, Dispositivo } from '../services/dispositivo.service';
 import { TipoContadorService, TipoContador} from '../services/tipo-contador.service';
 
-
 @Component({
   selector: 'app-listado-dispositivos',
   templateUrl: './listado-dispositivos.page.html',

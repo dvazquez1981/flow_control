@@ -1,6 +1,8 @@
 const Dispositivo = require('../models/Dispositivo.js');
 const { sanitize } = require('../utils/sanitize.js');
 const TipoContador = require ('../models/TipoContador.js')
+const  ftdb= require('../bd/ftdb.js');
+
 
 /** Obtener todos los dispositivos */
 async function getAll(req, res) {
@@ -32,8 +34,26 @@ async function getOne(req, res) {
 
   try {
     const dispositivo = await Dispositivo.findOne({ where: { dispositivoId: numeroDispositivoId } });
-    if (dispositivo) {
-      res.status(200).json(sanitize(dispositivo));
+   
+   
+   
+    const dispositivoConDescripcion = await ftdb.query(`
+    select d.* , tc.TC_TipoContador  as tipoContadorDescripcion
+    from  Dispositivo d, TipoContador tc 
+    WHERE d.tipoContadorId=tc.TC_Id 
+    and d.dispositivoId=:dispositivoId
+    `, {
+     replacements: { 
+       dispositivoId: numeroDispositivoId
+        
+     },
+     type: ftdb.QueryTypes.SELECT
+   });
+   
+   
+   
+    if (dispositivoConDescripcion.length>0) {
+      res.status(200).json(sanitize(dispositivoConDescripcion.at(0)));
     } else {
       res.status(404).json({ message: 'No se encuentra el dispositivo.' });
     }
