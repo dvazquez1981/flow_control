@@ -13,7 +13,7 @@ const {
     crearComando,
     updateComando,
     deleteComando,
-    getUltimoComandoByDeviceID
+    getUltimoComandoByDeviceId
 } = require('../controllers/ComandoController.js');
 
 const router = express.Router();
@@ -25,6 +25,6 @@ router.post('/comando', sanitizeMiddlewareInput,chequeoToken,crearComando);
 router.delete('/comando/:cmdId', sanitizeMiddlewareInput,chequeoToken,deleteComando);
 router.patch('/comando/:cmdId', sanitizeMiddlewareInput,chequeoToken, updateComando);
 
-router.get('/comando/ultima/:dispositivoId', sanitizeMiddlewareInput, /*chequeoToken, */getUltimoComandoByDeviceID);
+router.get('/comando/ultima/:dispositivoId', sanitizeMiddlewareInput, /*chequeoToken, */getUltimoComandoByDeviceId);
 
 module.exports = router;

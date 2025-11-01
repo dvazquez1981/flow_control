@@ -4,6 +4,8 @@ const Comando = require('../models/Comando.js');
 const Dispositivo = require('../models/Dispositivo.js');
 const TipoComando = require('../models/TipoComando.js'); 
 const { sanitize } = require('../utils/sanitize.js');
+const  ftdb= require('../bd/ftdb.js');
+
 
 const client= require('../mqtt/mqttService.js');
 const mqtt = require('mqtt');
@@ -249,7 +251,7 @@ async function deleteComando(req, res) {
 
 
 // Obtener la última medición
-async function getUltimoComandoByDeviceID(req, res) {
+async function getUltimoComandoByDeviceId(req, res) {
   const { dispositivoId } = req.params;
 
   if (!dispositivoId) {
@@ -265,17 +267,31 @@ async function getUltimoComandoByDeviceID(req, res) {
   }
 
   try {
-    const ultimo= await Comando.findOne({
-      where: { dispositivoId: numDispositivoId },
-      order: [['cmdId', 'DESC']]
-    });
-    
+    const ultimoComandoConDescripcion = await ftdb.query(`
+      select c.* , tc.descripcion as tipoComandorDescripcion
+      from  Comando c, TipoComando tc, Dispositivo d, TipoContador cn
+      WHERE c.tipoComandId=tc.tipoComandId 
+      and tc.tipoContadorId=d.tipoContadorId
+      and d.dispositivoId=c.dispositivoId
+      and cn.TC_Id=d.tipoContadorId
+      and c.dispositivoId=:dispositivoId
 
+      order by cmdId DESC
+      `, {
+       replacements: { 
+         dispositivoId: numDispositivoId
+          
+       },
+       type: ftdb.QueryTypes.SELECT
+     });
+     
+    
+    
    
 
     console.log('Trato de obtener ultimo comando para este dispositivoId: '+ dispositivoId)
   
-    res.status(200).json({ status: 1, data: ultimo ? sanitize(ultimo) : null });
+    res.status(200).json({ status: 1, data: ultimoComandoConDescripcion.length>0 ? sanitize(ultimoComandoConDescripcion.at(0)) : null });
 
 
 
@@ -291,5 +307,5 @@ module.exports = {
   crearComando,
   updateComando,
   deleteComando,
-  getUltimoComandoByDeviceID
+  getUltimoComandoByDeviceId
 };
