@@ -1,22 +1,35 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Listado de Dispositivos</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>📋 Listado de Dispositivos</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <ion-list>
-    <ion-item *ngFor="let disp of dispositivos">
+    <!-- 🔹 Recorremos la lista de dispositivos -->
+    <ion-item
+      button
+      detail
+      *ngFor="let disp of dispositivos"
+      (click)="verDetalle(disp)"
+    >
       <ion-label>
-         {{ disp.nombre }} - {{ disp.ubicacion }} - {{ disp.tipoContadorDescripcion }}
+        <h2>{{ disp.nombre }}</h2>
+        <p>
+          <strong>Ubicación:</strong> {{ disp.ubicacion }}<br />
+          <strong>Tipo:</strong> {{ disp.tipoContadorDescripcion }}
+        </p>
       </ion-label>
+
+      <!-- 🔸 Botón adicional (opcional si querés acción separada) -->
       <ion-button
         slot="end"
-        fill="outline"
+        fill="solid"
         size="small"
+        color="secondary"
         (click)="verDetalle(disp); $event.stopPropagation()"
       >
-        Ver detalle
+        Ver
       </ion-button>
     </ion-item>
   </ion-list>

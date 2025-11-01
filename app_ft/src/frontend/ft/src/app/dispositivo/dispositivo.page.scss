@@ -1,346 +1,114 @@
-.page-dispositivo {
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+/* ==========================================================
+   🎨 Estilos principales de la página Home
+   Proyecto: Flow Control
+   Autor: Rebeca / Diego
+   ========================================================== */
+
+/* 🧭 Encabezado --------------------------------------------------- */
+ion-header {
+  /* Fondo con gradiente moderno */
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  ion-toolbar {
+    --background: transparent; /* Fondo transparente para mostrar el gradiente */
+    --color: white;
+    font-weight: 600;
+  }
+
+  ion-title {
+    text-align: center;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* 📦 Contenido principal ------------------------------------------ */
+ion-content {
+  --background: linear-gradient(135deg, #f7f9fc 0%, #e9eef3 100%);
   font-family: 'Inter', 'Roboto', Arial, sans-serif;
-  font-weight: 400;
-  color: #1a1a1a;
-  min-height: 100vh;
+  padding: 16px;
 
-  ion-header {
-    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
-    color: #ffffff;
-    padding: 0;
-    box-shadow: 0 4px 20px rgba(0, 184, 148, 0.3);
-    
-    ion-toolbar {
-      --background: transparent;
-      --border-width: 0;
+  /* Contenedor general de los bloques */
+  .contenedor-bloques {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Espaciado entre bloques */
+  }
+
+  /* 🧩 Bloque de información */
+  .bloque {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 8px;
     }
 
-    ion-title {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 1.4rem;
-      text-align: center;
-      letter-spacing: -0.02em;
-      color: #ffffff;
-      padding: 0 1rem;
-    }
-
-    ion-back-button {
-      --color: #ffffff;
-      --icon-margin-start: 8px;
-    }
-  }
-
-  ion-content {
-    --background: transparent;
-    --padding-start: 0;
-    --padding-end: 0;
-    --padding-top: 1rem;
-    --padding-bottom: 2rem;
-  }
-}
-
-/* Tarjetas mejoradas */
-.page-dispositivo ion-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.08),
-    0 1px 4px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  padding: 1.5rem;
-  margin: 0 0 1.5rem 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #00b894, #00cec9);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 
-      0 8px 30px rgba(0, 0, 0, 0.12),
-      0 2px 8px rgba(0, 0, 0, 0.06);
-    
-    &::before {
-      opacity: 1;
-    }
-  }
-}
-
-/* Encabezados de tarjetas */
-.page-dispositivo ion-card-header {
-  padding: 0 0 1rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  margin-bottom: 1rem;
-}
-
-.page-dispositivo ion-card-title {
-  font-weight: 700;
-  font-size: 1.3rem;
-  color: #1a1a1a !important;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-/* Contenido de tarjetas */
-.page-dispositivo ion-card-content {
-  padding: 0;
-  color: #333 !important;
-
-  p {
-    margin: 0.75rem 0;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: #444 !important;
-
-    strong {
-      font-weight: 600;
-      color: #1a1a1a !important;
-      min-width: 120px;
-      display: inline-block;
-    }
-  }
-}
-
-/* Lista de respuestas */
-.page-dispositivo ion-list {
-  background: transparent;
-  padding: 0;
-  margin-top: 1rem;
-
-  ion-item {
-    --background: rgba(0, 184, 148, 0.05);
-    --border-radius: 12px;
-    --padding-start: 1rem;
-    --padding-end: 1rem;
-    --inner-padding-end: 0;
-    margin: 0.5rem 0;
-    border: 1px solid rgba(0, 184, 148, 0.1);
-    
-    ion-label {
-      margin: 0.75rem 0;
-      
-      p {
-        margin: 0.4rem 0;
-        font-size: 0.9rem;
-        color: #555 !important;
-        
-        strong {
-          color: #333 !important;
-        }
-      }
-    }
-  }
-}
-
-/* Formularios */
-.page-dispositivo ion-item {
-  --background: rgba(255, 255, 255, 0.8);
-  --border-radius: 12px;
-  --padding-start: 1rem;
-  --padding-end: 1rem;
-  margin: 1rem 0;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  
-  ion-label {
-    color: #666 !important;
-    font-weight: 500;
-  }
-  
-  ion-select,
-  ion-input {
-    --padding-start: 0;
-    color: #1a1a1a !important;
-  }
-}
-
-/* Botones mejorados */
-.page-dispositivo ion-button {
-  --border-radius: 12px;
-  --padding-top: 1rem;
-  --padding-bottom: 1rem;
-  font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: -0.01em;
-  transition: all 0.2s ease;
-  margin: 0.5rem 0;
-
-  &[expand="block"] {
-    --box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
-    
-    &:hover {
-      --box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
-      transform: translateY(-2px);
-    }
-    
-    &:active {
-      transform: translateY(0);
-    }
-  }
-
-  &[color="primary"] {
-    --background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
-    --background-hover: linear-gradient(135deg, #00cec9 0%, #00b894 100%);
-  }
-
-  &[color="secondary"] {
-    --background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-    --background-hover: linear-gradient(135deg, #81ecec 0%, #00cec9 100%);
-  }
-}
-
-/* Estados y utilidades */
-.page-dispositivo .text-muted {
-  color: #888 !important;
-  font-style: italic;
-  text-align: center;
-  padding: 1rem;
-}
-
-/* Tarjeta de última medición con estilo especial */
-.page-dispositivo ion-card:has(.ultima-medicion) {
-  background: linear-gradient(135deg, rgba(116, 185, 255, 0.1) 0%, rgba(9, 132, 227, 0.05) 100%);
-  border: 1px solid rgba(116, 185, 255, 0.3);
-  
-  &::before {
-    background: linear-gradient(90deg, #74b9ff, #0984e3);
-  }
-}
-
-/* Animaciones */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.page-dispositivo ion-card {
-  animation: fadeInUp 0.5s ease-out both;
-  
-  &:nth-child(1) { animation-delay: 0.1s; }
-  &:nth-child(2) { animation-delay: 0.2s; }
-  &:nth-child(3) { animation-delay: 0.3s; }
-  &:nth-child(4) { animation-delay: 0.4s; }
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .page-dispositivo {
-    padding: 1rem;
-    
-    ion-card {
-      padding: 1.2rem;
-      margin-bottom: 1.2rem;
-    }
-    
-    ion-card-title {
-      font-size: 1.2rem;
-    }
-    
-    ion-card-content p {
+    p {
       font-size: 0.9rem;
+      color: #555;
     }
+  }
+
+  /* 🔹 Ejemplo de fila horizontal con scroll */
+  .fila-scroll {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 10px 12px;
+  }
+
+  .item-scroll {
+    min-width: 180px;
+    flex: 0 0 auto;
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
 }
 
-/* Modo oscuro */
-@media (prefers-color-scheme: dark) {
-  .page-dispositivo {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
-    color: #ffffff;
-
-    ion-card {
-      background: rgba(45, 52, 54, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      
-      ion-card-title {
-        color: #ffffff !important;
-      }
-      
-      ion-card-content {
-        color: #dddddd !important;
-        
-        p {
-          color: #cccccc !important;
-          
-          strong {
-            color: #ffffff !important;
-          }
-        }
-      }
-    }
-
-    ion-item {
-      --background: rgba(45, 52, 54, 0.6);
-      
-      ion-label {
-        color: #bbbbbb !important;
-      }
-    }
-
-    .text-muted {
-      color: #888 !important;
-    }
-  }
+/* ⚙️ Botones y acciones -------------------------------------------- */
+ion-button {
+  --background: #007bff;
+  --background-hover: #0069d9;
+  --border-radius: 8px;
+  font-weight: 500;
 }
 
-/* Estados de carga */
-.page-dispositivo .loading-state {
+/* 🦶 Pie de página -------------------------------------------------- */
+ion-footer {
+  --background: #f1f3f6;
   text-align: center;
-  padding: 3rem 1rem;
-  
-  ion-spinner {
-    --color: #00b894;
-    margin-bottom: 1rem;
-  }
-  
+  padding: 8px;
+
   p {
-    color: #666 !important;
+    font-size: 0.8rem;
+    color: #777;
+  }
+}
+
+/* ==========================================================
+   📱 Adaptaciones para pantallas pequeñas
+   ========================================================== */
+@media (max-width: 480px) {
+  ion-title {
     font-size: 1rem;
   }
-}
 
-/* Mejoras específicas para el listado de respuestas */
-.page-dispositivo h4 {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #333 !important;
-  margin: 1.5rem 0 1rem 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(0, 184, 148, 0.2);
-}
+  .bloque {
+    padding: 12px;
+  }
 
-/* Estilo para cuando no hay datos */
-.page-dispositivo .no-data {
-  text-align: center;
-  padding: 2rem 1rem;
-  color: #888 !important;
-  
-  &::before {
-    content: '📋';
-    font-size: 2rem;
-    display: block;
-    margin-bottom: 1rem;
-    opacity: 0.5;
+  .item-scroll {
+    min-width: 150px;
   }
 }
