@@ -27,7 +27,7 @@
       <ion-card-title>Último Comando</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>ID:</strong> {{ ultimoComando.cmdId }}</p>
+      <!-- <p><strong>ID:</strong> {{ ultimoComando.cmdId }}</p>-->
       <p><strong>Tipo de comando:</strong> {{ ultimoComando.tipoComandorDescripcion }}</p>
       <p><strong>Valor:</strong> {{ ultimoComando.valor }}</p>
       <p><strong>Fecha:</strong> {{ ultimoComando.fecha | fechaLocal }}</p>
@@ -107,7 +107,7 @@
       
       <p><strong>Fecha: </strong> {{ ultimaMedicion.fecha | fechaLocal}}</p>
       <p><strong>Carril: </strong> {{ ultimaMedicion.carril }}</p>
-      <p><strong>Clasificación id: </strong> {{ ultimaMedicion.clasificacionId }}</p>
+      <p><strong>Clasificación: </strong> {{ ultimaMedicion.clasificacionDescripcion }}</p>
       <p><strong>Valor: </strong> {{ ultimaMedicion.valor }}</p>
     </ion-card-content>
     <ion-card-content>

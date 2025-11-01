@@ -12,6 +12,7 @@ export interface Medicion {
   clasificacionId: number;
   tipoContadorId: number;  
   dispositivoId: number;
+  clasificacionDescripcion?: string;
 }
 
 @Injectable({

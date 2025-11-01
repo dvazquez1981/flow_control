@@ -25,6 +25,7 @@
         <ion-item class="medicion-item" *ngFor="let medicion of grupo.mediciones; trackBy: trackMedicion">
           <ion-label class="ion-text-center">
             <p><strong>Carril: {{ medicion.carril }}</strong></p>
+            
             <p>Clasificación: {{ medicion.clasificacionDescripcion }}</p>
             <p>Valor: {{ +medicion.valor | unidad:'Vehiculos' }}</p>
           </ion-label>

@@ -212,15 +212,33 @@ async function getUltimaMedicionByDeviceID(req, res) {
   }
 
   try {
+
+    /*
     const ultima = await Medicion.findOne({
       where: { dispositivoId: numDispositivoId },
       order: [['medicionId', 'DESC']]
     });
+*/
 
- 
+    const ultimaMedicionConDescripcion = await ftdb.query(`
+      select m.* , c.descripcion as clasificacionDescripcion
+      from  Medicion m, Clasificacion c, Dispositivo d, TipoContador tc
+      WHERE c.tipoContadorId=d.tipoContadorId
+      and d.dispositivoId=m.dispositivoId
+      and m.dispositivoId=:dispositivoId
+
+      order by medicionId DESC
+      `, {
+       replacements: { 
+         dispositivoId: numDispositivoId
+          
+       },
+       type: ftdb.QueryTypes.SELECT
+     });
+
     console.log('Trato de obtener ultima medicion para este dispositivoId: '+ dispositivoId)
   
-    res.status(200).json({ status: 1, data: ultima ? sanitize(ultima) : null });
+    res.status(200).json({ status: 1, data: ultimaMedicionConDescripcion.length>0 ? sanitize(ultimaMedicionConDescripcion.at(0)) : null });
   } catch (error) {
      console.error('Error al obtener la medicion');
      res.status(500).json({ message: 'Algo salió mal', data: { error } });
