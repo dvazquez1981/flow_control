@@ -26,11 +26,28 @@ export class MedicionService {
     private clasificacionService: ClasificacionService
   ) {}
 
-  // Obtener todas las mediciones de un dispositivo con descripción y paginación
-async getMediciones(dispositivoId: number, limit = 100, offset = 0): Promise<Medicion[]> {
-  const url = `${this.baseUrl}/dispositivo/${dispositivoId}?limit=${limit}&offset=${offset}`;
+// Obtener todas las mediciones de un dispositivo con descripción, paginación y rango opcional
+async getMediciones(
+  dispositivoId: number,
+  limit = 100,
+  offset = 0,
+  fechaDesde?: string,
+  fechaHasta?: string
+): Promise<Medicion[]> {
+  // 🔹 Construcción dinámica de la URL con query params
+  let url = `${this.baseUrl}/dispositivo/${dispositivoId}?limit=${limit}&offset=${offset}`;
 
-  const mediciones: Medicion[] = await firstValueFrom(
+  if (fechaDesde) {
+    url += `&fechaDesde=${encodeURIComponent(fechaDesde)}`;
+  }
+  if (fechaHasta) {
+    url += `&fechaHasta=${encodeURIComponent(fechaHasta)}`;
+  }
+
+  console.log('Llamando a:', url);
+
+  // 🔹 Llamada HTTP con manejo de errores
+  return await firstValueFrom(
     this.http.get<Medicion[]>(url).pipe(
       catchError(err => {
         console.error('Error al obtener mediciones', err);
@@ -38,9 +55,6 @@ async getMediciones(dispositivoId: number, limit = 100, offset = 0): Promise<Med
       })
     )
   );
-
-  console.log(`Mediciones recibidas (offset ${offset}, limit ${limit}):`, mediciones);
-  return mediciones;
 }
 
   getUltimaMedicion(dispositivoId: number): Promise<Medicion> {

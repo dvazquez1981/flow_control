@@ -136,64 +136,77 @@ async function createMedicion(req, res) {
   }
 }
 
-// Obtener mediciones por dispositivo
+// Obtener mediciones por dispositivo (con rango de fechas opcional)
 async function getAllByDeviceId(req, res) {
-  const { dispositivoId } = req.params;
-
-  const { limit= 100, offset = 0 } = req.query;
-
- //console.log(`Buscando mediciones del dispositivoId: ${numDispositivoId} (limit ${limit}, offset ${offset})`);
-
-  if (!dispositivoId) {
-    return res.status(400).json({
-      message: 'dispositivoId es obligatorio',
-      status: 0
-    });
-  }
-
-  const numDispositivoId = parseInt(dispositivoId);
-  if (isNaN(numDispositivoId)) {
-    return res.status(400).json({
-      message: 'El valor de dispositivoId no es numérico',
-      status: 0
-    });
-  }
-
   try {
-    console.log(`Buscando mediciones del dispositivoId: ${numDispositivoId} (limit ${limit}, offset ${offset})`);
+    const { dispositivoId } = req.params;
+    const { limit = 100, offset = 0, fechaDesde, fechaHasta } = req.query;
 
-
-const medicionesConDescripcion = await ftdb.query(`
- select m.* , c.descripcion  as clasificacionDescripcion
- from Medicion m, Dispositivo d, Clasificacion c 
- WHERE d.dispositivoId=m.dispositivoId 
- and d.tipoContadorId=c.tipoContadorId 
- and c.clasificacionId=m.clasificacionId
- and d.dispositivoId=:dispositivoId
-  ORDER BY m.medicionId DESC
-  LIMIT :limit OFFSET :offset
-`, {
-  replacements: { 
-    dispositivoId: numDispositivoId, 
-    limit: parseInt(limit), 
-    offset: parseInt(offset) 
-  },
-  type: ftdb.QueryTypes.SELECT
-});
-
-
- 
-
-    if (medicionesConDescripcion.length > 0) {
-      res.status(200).json(sanitize(medicionesConDescripcion));
-    } else {
-      res.status(404).json({ message: 'No se encontraron mediciones.' });
+    // Validaciones básicas
+    if (!dispositivoId) {
+      return res.status(400).json({
+        message: 'El parámetro dispositivoId es obligatorio.',
+        status: 0
+      });
     }
+
+    const numDispositivoId = parseInt(dispositivoId, 10);
+    if (isNaN(numDispositivoId)) {
+      return res.status(400).json({
+        message: 'El valor de dispositivoId debe ser numérico.',
+        status: 0
+      });
+    }
+
+    // Construcción dinámica del WHERE
+    let whereClause = `WHERE d.dispositivoId = :dispositivoId`;
+    const replacements = {
+      dispositivoId: numDispositivoId,
+      limit: parseInt(limit, 10),
+      offset: parseInt(offset, 10)
+    };
+
+    if (fechaDesde) {
+      whereClause += ` AND m.fecha >= :fechaDesde`;
+      replacements.fechaDesde = fechaDesde;
+    }
+
+    if (fechaHasta) {
+      whereClause += ` AND m.fecha <= :fechaHasta`;
+      replacements.fechaHasta = fechaHasta;
+    }
+
+    console.log(`Buscando mediciones del dispositivoId: ${numDispositivoId} (limit ${limit}, offset ${offset}, desde ${fechaDesde || '-'}, hasta ${fechaHasta || '-'})`);
+
+    const sql = `
+      SELECT 
+        m.*, 
+        c.descripcion AS clasificacionDescripcion
+      FROM Medicion m
+      JOIN Dispositivo d ON d.dispositivoId = m.dispositivoId
+      JOIN Clasificacion c ON c.tipoContadorId = d.tipoContadorId 
+                           AND c.clasificacionId = m.clasificacionId
+      ${whereClause}
+      ORDER BY m.medicionId DESC
+      LIMIT :limit OFFSET :offset
+    `;
+
+    const mediciones = await ftdb.query(sql, {
+      replacements,
+      type: ftdb.QueryTypes.SELECT
+    });
+
+    if (mediciones.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron mediciones.' });
+    }
+
+    return res.status(200).json(sanitize(mediciones));
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: error.message });
+    console.error('Error en getAllByDeviceId:', error);
+    return res.status(500).json({ error: error.message });
   }
 }
+
 
 // Obtener la última medición
 async function getUltimaMedicionByDeviceID(req, res) {

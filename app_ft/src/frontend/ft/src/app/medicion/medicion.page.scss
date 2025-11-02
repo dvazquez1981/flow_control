@@ -219,3 +219,49 @@
     }
   }
 }
+/* Barra de filtros compacta en línea */
+.page-mediciones .filtro-toolbar-compact {
+  padding: 4px;
+}
+
+/* Contenedor inline */
+.page-mediciones .filtro-toolbar-compact .filtro-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* Grupos de fecha */
+.page-mediciones .filtro-toolbar-compact .fecha-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inputs compactos */
+.page-mediciones .filtro-toolbar-compact ion-input::part(native) {
+  font-size: 0.8rem;
+  height: 32px;
+  padding: 2px 4px;
+}
+
+/* Botones compactos */
+.page-mediciones .filtro-toolbar-compact ion-button {
+  font-size: 0.8rem;
+  --min-height: 32px;
+  --padding-top: 2px;
+  --padding-bottom: 2px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+}
+.page-mediciones .fecha-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-mediciones .fecha-group .fecha-label {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}

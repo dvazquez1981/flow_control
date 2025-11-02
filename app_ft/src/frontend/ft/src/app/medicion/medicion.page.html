@@ -9,18 +9,42 @@
 
 <ion-content class="page-mediciones" fullscreen>
 
+ 
+  <!-- 🔹 Filtros compactos en una sola barra -->
+<!-- 🔹 Filtros compactos en una sola barra -->
+<!-- 🔹 Filtros compactos en una sola línea -->
+<ion-toolbar class="filtro-toolbar-compact">
+  <div class="filtro-inline">
+    <div class="fecha-group">
+      <ion-input type="date" [(ngModel)]="fechaDesde"></ion-input>
+    </div>
+    
+    <div class="fecha-group">
+      <ion-input type="date" [(ngModel)]="fechaHasta"></ion-input>
+    </div>
+    
+
+    <ion-button color="medium" (click)="limpiarFiltro()">Limpiar</ion-button>
+    <ion-button color="success" (click)="exportarCSV()">Exportar</ion-button>
+  </div>
+</ion-toolbar>
+
+
+
+  <!-- 🔹 Barra de controles de paginación -->
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="paginaAnterior()" [disabled]="offset === 0">Anterior</ion-button>
     </ion-buttons>
-  
+
     <ion-buttons slot="end">
       <ion-button (click)="siguientePagina()" [disabled]="totalCargados < limit">Siguiente</ion-button>
-      <ion-button color="primary" (click)="exportarCSV()">Exportar CSV</ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ng-container *ngIf="medicionesAgrupadas && medicionesAgrupadas.length > 0; else sinMediciones">
 
+  
+  <!-- 🔹 Lista de mediciones agrupadas -->
+  <ng-container *ngIf="medicionesAgrupadas && medicionesAgrupadas.length > 0; else sinMediciones">
     <ion-list *ngFor="let grupo of medicionesAgrupadas" lines="none">
 
       <!-- Encabezado de grupo por fecha -->
@@ -42,7 +66,6 @@
       </div>
 
     </ion-list>
-
   </ng-container>
 
   <ng-template #sinMediciones>
