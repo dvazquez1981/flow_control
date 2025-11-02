@@ -26,24 +26,22 @@ export class MedicionService {
     private clasificacionService: ClasificacionService
   ) {}
 
-  // Obtener todas las mediciones de un dispositivo con descripción
-  async getMediciones(dispositivoId: number): Promise<Medicion[]> {
-    // 1️⃣ Obtener mediciones del backend
-    const mediciones: Medicion[] = await firstValueFrom(
-      this.http.get<Medicion[]>(`${this.baseUrl}/dispositivo/${dispositivoId}`).pipe(
-        catchError(err => {
-          console.error('Error al obtener mediciones', err);
-          return throwError(() => err);
-        })
-      )
-    );
-    
-  console.log('llego')
-  console.log('Mediciones recibidas:', mediciones); 
+  // Obtener todas las mediciones de un dispositivo con descripción y paginación
+async getMediciones(dispositivoId: number, limit = 100, offset = 0): Promise<Medicion[]> {
+  const url = `${this.baseUrl}/dispositivo/${dispositivoId}?limit=${limit}&offset=${offset}`;
 
+  const mediciones: Medicion[] = await firstValueFrom(
+    this.http.get<Medicion[]>(url).pipe(
+      catchError(err => {
+        console.error('Error al obtener mediciones', err);
+        return throwError(() => err);
+      })
+    )
+  );
 
-    return mediciones;
-  }
+  console.log(`Mediciones recibidas (offset ${offset}, limit ${limit}):`, mediciones);
+  return mediciones;
+}
 
   getUltimaMedicion(dispositivoId: number): Promise<Medicion> {
     return firstValueFrom(

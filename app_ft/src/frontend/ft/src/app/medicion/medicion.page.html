@@ -9,6 +9,16 @@
 
 <ion-content class="page-mediciones" fullscreen>
 
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="paginaAnterior()" [disabled]="offset === 0">Anterior</ion-button>
+    </ion-buttons>
+  
+    <ion-buttons slot="end">
+      <ion-button (click)="siguientePagina()" [disabled]="totalCargados < limit">Siguiente</ion-button>
+      <ion-button color="primary" (click)="exportarCSV()">Exportar CSV</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
   <ng-container *ngIf="medicionesAgrupadas && medicionesAgrupadas.length > 0; else sinMediciones">
 
     <ion-list *ngFor="let grupo of medicionesAgrupadas" lines="none">
@@ -25,7 +35,6 @@
         <ion-item class="medicion-item" *ngFor="let medicion of grupo.mediciones; trackBy: trackMedicion">
           <ion-label class="ion-text-center">
             <p><strong>Carril: {{ medicion.carril }}</strong></p>
-            
             <p>Clasificación: {{ medicion.clasificacionDescripcion }}</p>
             <p>Valor: {{ +medicion.valor | unidad:'Vehiculos' }}</p>
           </ion-label>
@@ -43,4 +52,3 @@
   </ng-template>
 
 </ion-content>
-
