@@ -8,6 +8,8 @@ import { FechaLocalPipe } from '../pipes/fecha-local.pipe';
 
 
 
+
+
 import {
   IonContent,
   IonHeader,
@@ -64,15 +66,16 @@ export class MedicionPage implements OnInit, OnDestroy {
   dispositivoId: any;
   private paramMapSub?: any;
 
-  // 🔹 Variables de paginación
-  limit = 40;
+  //  Variables de paginación
+  limit = 100;
   offset = 0;
   totalCargados = 0;
 
-  // 🔹 Nuevos filtros de fecha
+  //  Nuevos filtros de fecha
   fechaDesde?: string;
   fechaHasta?: string;
 
+  
   constructor(
     private route: ActivatedRoute,
     private medicionService: MedicionService,
@@ -80,6 +83,9 @@ export class MedicionPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+ 
+ 
+
     this.paramMapSub = this.route.paramMap.subscribe(async params => {
       this.dispositivoId = Number(params.get('dispositivoId'));
       if (!this.dispositivoId) {
@@ -96,7 +102,65 @@ export class MedicionPage implements OnInit, OnDestroy {
     this.detenerActualizacionMediciones();
     if (this.paramMapSub) this.paramMapSub.unsubscribe();
   }
+   
 
+  private crearGrafico() {
+    const canvas = document.getElementById('graficoMediciones') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // limpiar canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // preparar ejes
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = 50;
+
+    // calcular máximos
+    const valores = this.mediciones.map(m => Number(m.valor));
+    const maxValor = Math.max(...valores);
+
+    // dibujar ejes
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.lineTo(width - padding, height - padding);
+    ctx.strokeStyle = '#000';
+    ctx.stroke();
+
+    // agrupar por "Carril + Clasificación"
+    const grupos: Record<string, { color: string; valores: number[] }> = {};
+    const colores = ['#36A2EB', '#FF6384', '#4BC0C0', '#FF9F40', '#9966FF', '#8BC34A', '#FFEB3B'];
+    let colorIndex = 0;
+
+    for (const m of this.mediciones) {
+      const clave = `Carril ${m.carril} - ${m.clasificacionDescripcion || 'Sin clasif.'}`;
+      if (!grupos[clave]) {
+        grupos[clave] = { color: colores[colorIndex % colores.length], valores: [] };
+        colorIndex++;
+      }
+      grupos[clave].valores.push(Number(m.valor));
+    }
+
+    // dibujar líneas
+    const totalPuntos = Math.max(...Object.values(grupos).map(g => g.valores.length));
+
+    Object.keys(grupos).forEach((clave, i) => {
+      const g = grupos[clave];
+      ctx.beginPath();
+      g.valores.forEach((v, idx) => {
+        const x = padding + (idx / (totalPuntos - 1 || 1)) * (width - 2 * padding);
+        const y = height - padding - (v / maxValor) * (height - 2 * padding);
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = g.color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+  }
   // 🔹 Cargar mediciones con filtros opcionales
   async cargarMediciones() {
     const id = Number(this.route.snapshot.paramMap.get('dispositivoId'));

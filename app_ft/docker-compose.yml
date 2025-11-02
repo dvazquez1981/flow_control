@@ -72,7 +72,25 @@ services:
     networks:
       - app-fullstack-net
     restart: unless-stopped
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"   # Acceso web a Grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - mysql-server
+    networks:
+      - app-fullstack-net
 
 networks:
   app-fullstack-net:
     driver: bridge
+    
+volumes:
+  grafana-data: {}   # ✅ Def

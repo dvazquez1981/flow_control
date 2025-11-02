@@ -42,7 +42,8 @@
     </ion-buttons>
   </ion-toolbar>
 
-  
+
+
   <!-- 🔹 Lista de mediciones agrupadas -->
   <ng-container *ngIf="medicionesAgrupadas && medicionesAgrupadas.length > 0; else sinMediciones">
     <ion-list *ngFor="let grupo of medicionesAgrupadas" lines="none">
