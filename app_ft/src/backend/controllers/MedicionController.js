@@ -222,7 +222,10 @@ async function getUltimaMedicionByDeviceID(req, res) {
 
     const ultimaMedicionConDescripcion = await ftdb.query(`
       select m.* , c.descripcion as clasificacionDescripcion
-      from  Medicion m, Clasificacion c, Dispositivo d, TipoContador tc
+      from  Medicion m,
+       Clasificacion c, 
+       Dispositivo d, 
+       TipoContador tc
       WHERE c.tipoContadorId=d.tipoContadorId
       and d.dispositivoId=m.dispositivoId
       and m.dispositivoId=:dispositivoId

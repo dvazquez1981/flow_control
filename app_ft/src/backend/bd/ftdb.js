@@ -7,6 +7,8 @@ const ftdb = new Sequelize('flow_control', 'root', 'userpass', {
     dialect: 'mysql',
     dialectModule: mysql2,
     logging: false,
+    timezone: '-03:00', // hora de Buenos Aires
+
     pool: {
       max: 20,
       min: 0,

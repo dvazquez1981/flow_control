@@ -29,6 +29,9 @@ const Respuesta =ftdb.define('Respuesta',{
       }
     }, {
     tableName: 'Respuesta',
-    timestamps: false
+    timestamps: true,    // activa timestamps
+    createdAt: 'createdAt', // solo createdAt
+    updatedAt: false,       // desactiva updatedAt
+    freezeTableName: true
 });
 module.exports = Respuesta;

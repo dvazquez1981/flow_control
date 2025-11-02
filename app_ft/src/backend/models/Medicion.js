@@ -31,7 +31,11 @@ const Medicion=ftdb.define('Medicion',{
       }
     }, {
     tableName: 'Medicion',
-    timestamps: false
+    timestamps: true,    // activa timestamps
+    createdAt: 'createdAt', // solo createdAt
+    updatedAt: false,       // desactiva updatedAt
+    freezeTableName: true
+    
 });
 module.exports = Medicion ;
 

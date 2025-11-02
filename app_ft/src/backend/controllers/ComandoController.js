@@ -275,7 +275,6 @@ async function getUltimoComandoByDeviceId(req, res) {
       and d.dispositivoId=c.dispositivoId
       and cn.TC_Id=d.tipoContadorId
       and c.dispositivoId=:dispositivoId
-
       order by cmdId DESC
       `, {
        replacements: { 
