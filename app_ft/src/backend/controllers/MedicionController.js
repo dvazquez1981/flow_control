@@ -97,8 +97,7 @@ async function createMedicion(req, res) {
       });
     }
 
-    
-
+   
 
     // Evitar duplicados exactos (misma fecha, dispositivo y carril)
     const existing = await Medicion.findOne({

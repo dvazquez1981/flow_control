@@ -19,6 +19,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: userpass
     container_name: mysql-server
+    command: --max_allowed_packet=256M
     volumes:
       - ./db/dumps:/docker-entrypoint-initdb.d
       - ./db/data:/var/lib/mysql
@@ -33,6 +34,8 @@ services:
       PMA_HOST: mysql-server
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: userpass
+
+    
     container_name: mysql-admin
     networks:
       - app-fullstack-net
@@ -96,4 +99,4 @@ networks:
     driver: bridge
     
 volumes:
-  grafana-data: {}   # ✅ Def
+  grafana-data: {}   

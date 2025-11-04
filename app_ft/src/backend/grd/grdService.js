@@ -10,6 +10,7 @@ async function sincronizarNuevos(grd_id) {
     const ultimaFecha = await Medicion.max('fecha', {
       where: { dispositivoId: grd_id }
     });
+    const ultimaUTC = ultimaFecha ? ultimaFecha.getTime() : 0;
 
     // Ejecutar el SP
     const results = await grddb.query(
@@ -20,10 +21,10 @@ async function sincronizarNuevos(grd_id) {
       }
     );
 
-    //Filtrar solo registros más recientes que la última fecha
+    // Filtrar solo registros más recientes que la última fecha
     const nuevos = results.filter(r => {
-      const fecha = new Date(Date.UTC(r.ano, r.mes - 1, r.dia, r.hora, r.minutos, r.segundos));
-      return !ultimaFecha || fecha > ultimaFecha;
+      const fechaUTC = Date.UTC(r.ano, r.mes - 1, r.dia, r.hora + 3, r.minutos, r.segundos);
+      return fechaUTC > ultimaUTC;
     });
 
     if (nuevos.length === 0) {
@@ -31,56 +32,60 @@ async function sincronizarNuevos(grd_id) {
       return;
     }
 
-    //Mapear a Medicion
+    // Mapear a Medicion
     const mediciones = [];
     for (const r of nuevos) {
-      const fecha = new Date(r.ano, r.mes - 1, r.dia, r.hora, r.minutos, r.segundos);
+      // Convertir a hora local de Buenos Aires
+      const fechaLocal = Date.UTC(r.ano, r.mes - 1, r.dia, r.hora + 3, r.minutos, r.segundos);
 
       // Carril 1
       mediciones.push({
-        fecha,
+        fecha: fechaLocal,
         valor: r.liv_1,
         carril: 1,
         clasificacionId: 1,
         dispositivoId: r.grd_id
       });
 
-      // Carril 2 si tiene datos
-      
-        mediciones.push({
-          fecha,
-          valor: r.liv_2,
-          carril: 2,
-          clasificacionId: 1,
-          dispositivoId: r.grd_id
-        });
-     
-     
-         // Carril 1
+      // Carril 2
       mediciones.push({
-        fecha,
+        fecha: fechaLocal,
+        valor: r.liv_2,
+        carril: 2,
+        clasificacionId: 1,
+        dispositivoId: r.grd_id
+      });
+
+      // Carril 1 peso
+      mediciones.push({
+        fecha: fechaLocal,
         valor: r.pes_1,
         carril: 1,
         clasificacionId: 2,
         dispositivoId: r.grd_id
       });
 
-      // Carril 2 si tiene datos
-      
-        mediciones.push({
-          fecha,
-          valor: r.pes_2,
-          carril: 2,
-          clasificacionId:2 ,
-          dispositivoId: r.grd_id
-        });
-     
+      // Carril 2 peso
+      mediciones.push({
+        fecha: fechaLocal,
+        valor: r.pes_2,
+        carril: 2,
+        clasificacionId: 2,
+        dispositivoId: r.grd_id
+      });
+    }
+
+    // Insertar todos los registros nuevos por bloques
+    const BATCH_SIZE = 250;
+    for (let i = 0; i < mediciones.length; i += BATCH_SIZE) {
+      const batch = mediciones.slice(i, i + BATCH_SIZE);
+      try {
+        await Medicion.bulkCreate(batch);
+        console.log(`Insertadas ${batch.length} mediciones (bloque ${i / BATCH_SIZE + 1})`);
+      } catch (error) {
+        console.error(`Error insertando el bloque ${i / BATCH_SIZE + 1}:`, error.message);
       }
-
-
-    //Insertar todos los registros nuevos de golpe
-    await Medicion.bulkCreate(mediciones);
-    console.log(`Insertadas ${mediciones.length} nuevas mediciones`);
+    }
 
   } catch (err) {
     console.error('Error al sincronizar nuevos registros:', err);
@@ -89,7 +94,7 @@ async function sincronizarNuevos(grd_id) {
 
 setInterval(() => {
   sincronizarNuevos(15); // grd_id = 15
-}, 60000); // cada 60 segundos, por ejemplo
+}, 30000); // cada 30 segundos, por ejemplo
 
 
 module.exports = {

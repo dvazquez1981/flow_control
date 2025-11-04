@@ -26,6 +26,23 @@ SET time_zone = "+00:00";
 --
 -- Estructura de tabla para la tabla `Clasificacion`
 --
+-- 🔥 BORRADO PREVIO DE TABLAS (manteniendo integridad referencial)
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS `Respuesta`;
+DROP TABLE IF EXISTS `Comando`;
+DROP TABLE IF EXISTS `Estado`;
+DROP TABLE IF EXISTS `Medicion`;
+DROP TABLE IF EXISTS `LogEvento`;
+DROP TABLE IF EXISTS `Clasificacion`;
+DROP TABLE IF EXISTS `Dispositivo`;
+DROP TABLE IF EXISTS `TipoComando`;
+DROP TABLE IF EXISTS `TipoEstado`;
+DROP TABLE IF EXISTS `TipoContador`;
+DROP TABLE IF EXISTS `Usuario`;
+DROP TABLE IF EXISTS `userGroups`;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE `Clasificacion` (
   `clasificacionId` int(11) NOT NULL,
