@@ -94,7 +94,7 @@ async function sincronizarNuevos(grd_id) {
 
 setInterval(() => {
   sincronizarNuevos(15); // grd_id = 15
-}, 30000); // cada 30 segundos, por ejemplo
+}, 60000); // cada 60 segundos, por ejemplo
 
 
 module.exports = {
