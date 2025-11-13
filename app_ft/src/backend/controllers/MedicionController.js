@@ -101,7 +101,7 @@ async function createMedicion(req, res) {
 
     // Evitar duplicados exactos (misma fecha, dispositivo y carril)
     const existing = await Medicion.findOne({
-      where: { fecha, dispositivoId: numDispositivoId, carril }
+      where: { fecha, dispositivoId: numDispositivoId, carril, clasificacionId }
     });
 
     if (existing ) {

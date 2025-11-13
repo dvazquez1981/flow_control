@@ -78,6 +78,7 @@ async function getOneByComdId(req, res) {
 /** Crear una nueva respuesta */
 async function crearRespuesta(req, res) {
   const { fecha, cmdId, valor, dispositivoId } = req.body;
+  console.log('fecha:', fecha, 'cmdId:', cmdId, 'valor:', valor, ' dispositivoId:', dispositivoId);
 
   if (!fecha || !cmdId || !valor || !dispositivoId) {
     console.log('Faltan datos obligatorios para crear la respuesta');
@@ -143,9 +144,9 @@ const parsedDate = new Date(fecha);
 
     const nuevaRespuesta = await Respuesta.create({
       fecha,
-      numCmdId,
+      cmdId:numCmdId,
       valor,
-      numDispositivoId
+      dispositivoId:numDispositivoId
     });
 
     console.log('Respuesta creada con éxito');

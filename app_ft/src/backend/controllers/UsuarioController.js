@@ -145,7 +145,7 @@ async function updateUsuario(req, res) {
 
         // Cifrado de contraseña (opcional, solo si se proporciona una nueva contraseña)
         const hashedPassword = password 
-            ? md5(password) 
+            ?  crypto.createHash('md5').update(password).digest('hex')
             : usuario.password;
 
         // Actualizar campos del usuario
@@ -298,13 +298,14 @@ async function crearUsuario(req, res)
                 status: 0,
             });
         }
-
+       const passMD5 =  crypto.createHash('md5').update(password).digest('hex');
+        
         // Crear un nuevo usuario
         const newUser = await Usuario.create({
             name,
-            password: md5(user_password).toString(), // Encripta la contraseña
-             
+            password: passMD5,
             descrip: descrip || '',
+             userGroup
         });
 
         return res.status(201).json({
